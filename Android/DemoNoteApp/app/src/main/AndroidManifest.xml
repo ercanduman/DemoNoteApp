@@ -20,9 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.enbcreative.demonoteapp.ui.auth.login.LoginActivity"
-            android:label="@string/title_activity_login" />
+        <activity android:name=".ui.auth.AuthActivity" />
     </application>
 
 </manifest>

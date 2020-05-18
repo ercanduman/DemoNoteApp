@@ -1,19 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <data>
-
-        <variable
-            name="viewmodel"
-            type="Object" />
-
-    </data>
-
-</layout>-->
-
-
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -21,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="#E2E2E2"
     tools:context=".ui.auth.signup.SignUpFragment">
-
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -33,7 +17,6 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="45dp"
             android:background="@drawable/bg_splash_screen_icon" />
 
         <LinearLayout
@@ -83,8 +66,7 @@
                 android:drawablePadding="16dp"
                 android:hint="@string/name"
                 android:inputType="text"
-                android:padding="12dp"
-                android:text="@={viewmodel.name}" />
+                android:padding="12dp" />
 
             <EditText
                 android:layout_width="match_parent"
@@ -95,8 +77,7 @@
                 android:drawablePadding="16dp"
                 android:hint="@string/e_mail"
                 android:inputType="textEmailAddress"
-                android:padding="12dp"
-                android:text="@={viewmodel.email}" />
+                android:padding="12dp" />
 
             <EditText
                 android:layout_width="match_parent"
@@ -107,8 +88,7 @@
                 android:drawablePadding="16dp"
                 android:hint="password"
                 android:inputType="textPassword"
-                android:padding="12dp"
-                android:text="@={viewmodel.password}" />
+                android:padding="12dp" />
 
             <EditText
                 android:layout_width="match_parent"
@@ -119,8 +99,7 @@
                 android:drawablePadding="16dp"
                 android:hint="confirm password"
                 android:inputType="textPassword"
-                android:padding="12dp"
-                android:text="@={viewmodel.passwordconfirm}" />
+                android:padding="12dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -134,19 +113,18 @@
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:onClick="@{viewmodel::onSignupButtonClick}"
                 android:text="Sign Up"
                 android:textAllCaps="false" />
 
         </LinearLayout>
 
         <TextView
+            android:id="@+id/tv_sign_in_here"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/linearLayout2"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="12dp"
-            android:onClick="@{viewmodel::onLogin}"
             android:text="Already have an account?\nSign in Here"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
