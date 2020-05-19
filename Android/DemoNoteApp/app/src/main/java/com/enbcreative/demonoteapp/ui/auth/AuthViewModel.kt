@@ -3,7 +3,6 @@ package com.enbcreative.demonoteapp.ui.auth
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.enbcreative.demonoteapp.R
 import com.enbcreative.demonoteapp.data.backup.data.LoginDataSource
 import com.enbcreative.demonoteapp.data.backup.data.LoginRepository
 import com.enbcreative.demonoteapp.data.backup.data.Result
@@ -33,7 +32,7 @@ class AuthViewModel : ViewModel() {
         try {
             val result = LoginRepository(LoginDataSource()).login(email!!, password!!)
             if (result is Result.Success) _loginResult.value = result.data.toString()
-            else _loginResult.value = R.string.login_failed.toString()
+            else _loginResult.value = "Login failed"
         } catch (e: Exception) {
             logd("Login is failed....")
             e.printStackTrace()

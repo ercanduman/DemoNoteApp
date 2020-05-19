@@ -115,10 +115,8 @@ class LoginFragment : Fragment(), ProcessListener {
     }
 
     // A placeholder email check
-    private fun isUserEmailValid(email: String): Boolean {
-        return if (email.contains('@')) Patterns.EMAIL_ADDRESS.matcher(email).matches()
-        else email.isNotBlank()
-    }
+    private fun isUserEmailValid(email: String): Boolean =
+        email.isNotBlank() and Patterns.EMAIL_ADDRESS.matcher(email).matches()
 
     // A placeholder password check
     private fun isPassWordValid(password: String): Boolean = password.length > 5
