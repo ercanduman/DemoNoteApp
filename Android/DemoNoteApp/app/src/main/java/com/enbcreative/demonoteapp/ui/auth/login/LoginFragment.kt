@@ -1,9 +1,14 @@
 package com.enbcreative.demonoteapp.ui.auth.login
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
@@ -42,28 +47,93 @@ class LoginFragment : Fragment(), ProcessListener {
         tv_login_sign_up.setOnClickListener {
             findNavController().navigate(R.id.action_LoginFragment_to_SignUpFragment)
         }
+
+        initViews()
+    }
+
+    private fun initViews() {
+        val userMail = edt_user_mail_login
+        val userPassword = edt_password_login
+        val loginButton = btn_login
+        userMail.afterTextChanged {
+            areFieldsValid(userMail.text.toString(), userPassword.text.toString())
+        }
+
+        userPassword.apply {
+            afterTextChanged {
+                areFieldsValid(userMail.text.toString(), userPassword.text.toString())
+            }
+            setOnEditorActionListener { _, actionId, _ ->
+                when (actionId) {
+                    EditorInfo.IME_ACTION_DONE -> {
+                        areFieldsValid(userMail.text.toString(), userPassword.text.toString())
+                    }
+                }
+                false
+            }
+
+            loginButton.setOnClickListener {
+                progress_bar_loading_login.show()
+
+            }
+        }
     }
 
     override fun onStarted() {
-        loading.show()
+        progress_bar_loading_login.show()
         requireContext().toast("Login started")
     }
 
     override fun onSuccess() {
-        loading.hide()
+        progress_bar_loading_login.hide()
         requireContext().toast("Login finished")
     }
 
     override fun onSuccessResult(result: LiveData<String>) {
         result.observe(this, Observer {
             tv_login_sign_up.text = it
-            loading.hide()
+            progress_bar_loading_login.hide()
         })
     }
 
     override fun onFailure(message: String) {
         requireContext().toast("Login failed")
         logd("Execution failed: $message")
-        loading.hide()
+        progress_bar_loading_login.hide()
+    }
+
+    private fun areFieldsValid(email: String, password: String) {
+        when {
+            isUserEmailValid(email).not() -> {
+                edt_user_mail_login.error = getString(R.string.invalid_user_mail)
+            }
+            isPassWordValid(password).not() -> {
+                edt_password_login.error = getString(R.string.invalid_password)
+            }
+            else -> btn_login.isEnabled = true
+        }
+    }
+
+    // A placeholder email check
+    private fun isUserEmailValid(email: String): Boolean {
+        return if (email.contains('@')) Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        else email.isNotBlank()
+    }
+
+    // A placeholder password check
+    private fun isPassWordValid(password: String): Boolean = password.length > 5
+
+    /**
+     * Extension function to simplify setting on afterTextChanged action to EditText components
+     */
+    private fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
+        addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                afterTextChanged.invoke(s.toString())
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
     }
 }

@@ -21,7 +21,7 @@
         tools:context=".ui.auth.login.LoginFragment">
 
         <EditText
-            android:id="@+id/username"
+            android:id="@+id/edt_user_mail_login"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
@@ -36,7 +36,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/password"
+            android:id="@+id/edt_password_login"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
@@ -49,11 +49,11 @@
             android:text="@={viewModel.password}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/username" />
+            app:layout_constraintTop_toBottomOf="@+id/edt_user_mail_login" />
 
 
-        <Button
-            android:id="@+id/login"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
@@ -66,11 +66,11 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/password"
+            app:layout_constraintTop_toBottomOf="@+id/edt_password_login"
             app:layout_constraintVertical_bias="0.4" />
 
         <ProgressBar
-            android:id="@+id/loading"
+            android:id="@+id/progress_bar_loading_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -80,9 +80,9 @@
             android:layout_marginBottom="64dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/password"
+            app:layout_constraintEnd_toEndOf="@+id/edt_password_login"
             app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="@+id/password"
+            app:layout_constraintStart_toStartOf="@+id/edt_password_login"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.4"
             tools:visibility="visible" />
@@ -99,7 +99,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/login"
+            app:layout_constraintTop_toBottomOf="@+id/btn_login"
             app:layout_constraintVertical_bias="0.5" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
