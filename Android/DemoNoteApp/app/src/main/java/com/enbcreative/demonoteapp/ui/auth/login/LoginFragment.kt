@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.enbcreative.demonoteapp.R
@@ -50,6 +52,13 @@ class LoginFragment : Fragment(), ProcessListener {
     override fun onSuccess() {
         loading.hide()
         requireContext().toast("Login finished")
+    }
+
+    override fun onSuccessResult(result: LiveData<String>) {
+        result.observe(this, Observer {
+            tv_login_sign_up.text = it
+            loading.hide()
+        })
     }
 
     override fun onFailure(message: String) {

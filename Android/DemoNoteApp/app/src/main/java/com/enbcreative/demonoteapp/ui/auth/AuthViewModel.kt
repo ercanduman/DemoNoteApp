@@ -2,6 +2,8 @@ package com.enbcreative.demonoteapp.ui.auth
 
 import android.view.View
 import androidx.lifecycle.ViewModel
+import com.enbcreative.demonoteapp.data.network.WebApi
+import com.enbcreative.demonoteapp.data.repository.UserRepository
 
 class AuthViewModel : ViewModel() {
     var email: String? = null
@@ -18,5 +20,9 @@ class AuthViewModel : ViewModel() {
 
         // Success
         listener?.onSuccess()
+
+        val webApi = WebApi()
+        val loginResponse = UserRepository(webApi).login(email!!, password!!)
+        listener?.onSuccessResult(loginResponse)
     }
 }
