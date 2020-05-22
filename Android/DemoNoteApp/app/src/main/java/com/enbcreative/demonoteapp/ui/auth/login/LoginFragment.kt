@@ -18,9 +18,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.enbcreative.demonoteapp.LOGGED_ID
 import com.enbcreative.demonoteapp.R
-import com.enbcreative.demonoteapp.data.db.AppDatabase
-import com.enbcreative.demonoteapp.data.network.WebApi
-import com.enbcreative.demonoteapp.data.repository.UserRepository
 import com.enbcreative.demonoteapp.databinding.FragmentLoginBinding
 import com.enbcreative.demonoteapp.ui.auth.AuthViewModel
 import com.enbcreative.demonoteapp.ui.auth.AuthViewModelFactory
@@ -31,8 +28,14 @@ import com.enbcreative.demonoteapp.utils.logd
 import com.enbcreative.demonoteapp.utils.show
 import com.enbcreative.demonoteapp.utils.toast
 import kotlinx.android.synthetic.main.fragment_login.*
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.x.closestKodein
+import org.kodein.di.generic.instance
 
-class LoginFragment : Fragment(), ProcessListener {
+class LoginFragment : Fragment(), KodeinAware, ProcessListener {
+    override val kodein by closestKodein()
+    private val factory by instance<AuthViewModelFactory>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,11 +43,6 @@ class LoginFragment : Fragment(), ProcessListener {
     ): View? {
         val binding: FragmentLoginBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
-
-        val webApi = WebApi()
-        val db = AppDatabase(requireContext())
-        val repository = UserRepository(webApi, db)
-        val factory = AuthViewModelFactory(repository)
 
         val viewModel = ViewModelProvider(this, factory).get(AuthViewModel::class.java)
 
