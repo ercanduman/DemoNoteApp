@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.enbcreative.demonoteapp"
-        minSdkVersion 19
+        minSdkVersion 22
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
