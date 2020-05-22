@@ -3,13 +3,10 @@ package com.enbcreative.demonoteapp.ui.auth
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.enbcreative.demonoteapp.data.backup.data.LoginDataSource
-import com.enbcreative.demonoteapp.data.backup.data.LoginRepository
-import com.enbcreative.demonoteapp.data.backup.data.Result
 import com.enbcreative.demonoteapp.data.network.WebApi
 import com.enbcreative.demonoteapp.data.repository.UserRepository
+import com.enbcreative.demonoteapp.utils.ApiException
 import com.enbcreative.demonoteapp.utils.Coroutines
-import com.enbcreative.demonoteapp.utils.logd
 
 class AuthViewModel : ViewModel() {
     var email: String? = null
@@ -30,11 +27,14 @@ class AuthViewModel : ViewModel() {
         listener?.onSuccess()
 
         Coroutines.main {
-            val webApi = WebApi()
-            val loginResponse = UserRepository(webApi).login(email!!, password!!)
-            if (loginResponse.isSuccessful) {
-                _loginResult.value = loginResponse.body()?.user.toString()
-            } else _loginResult.value = "Login failed with code: ${loginResponse.code()}"
+            try {
+                val webApi = WebApi()
+                val loginResponse = UserRepository(webApi).login(email!!, password!!)
+                _loginResult.value =
+                    loginResponse.user?.toString() ?: "User not Found! - ${loginResponse.message}"
+            } catch (e: ApiException) {
+                _loginResult.value = "Login failed with code: ${e.message}"
+            }
         }
 
         /* try {

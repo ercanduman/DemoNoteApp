@@ -12,7 +12,7 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-        tv_splash_activity.setOnClickListener {
+        start_text_splash.setOnClickListener {
             startActivity(Intent(this, AuthActivity::class.java))
         }
     }
