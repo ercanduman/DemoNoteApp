@@ -1,6 +1,6 @@
 package com.enbcreative.demonoteapp.data.network
 
-import com.enbcreative.demonoteapp.data.db.model.User
+import com.enbcreative.demonoteapp.data.db.model.user.User
 import org.intellij.lang.annotations.Language
 
 /**

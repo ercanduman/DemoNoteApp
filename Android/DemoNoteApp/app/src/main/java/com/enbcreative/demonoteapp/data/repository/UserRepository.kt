@@ -1,7 +1,7 @@
 package com.enbcreative.demonoteapp.data.repository
 
 import com.enbcreative.demonoteapp.data.db.AppDatabase
-import com.enbcreative.demonoteapp.data.db.model.User
+import com.enbcreative.demonoteapp.data.db.model.user.User
 import com.enbcreative.demonoteapp.data.network.ApiResponse
 import com.enbcreative.demonoteapp.data.network.SafeApiRequest
 import com.enbcreative.demonoteapp.data.network.WebApi
