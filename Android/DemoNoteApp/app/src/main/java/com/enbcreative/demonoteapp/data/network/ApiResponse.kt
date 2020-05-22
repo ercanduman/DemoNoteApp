@@ -19,4 +19,10 @@ data class ApiResponse(
     val isSuccessful: Boolean?,
     val message: String?,
     val user: User?
-)
+) {
+    companion object {
+        const val JSON_FIELD_USER = "user"
+        const val JSON_FIELD_MESSAGE = "message"
+        const val JSON_FIELD_IS_SUCCESSFUL = "isSuccessful"
+    }
+}

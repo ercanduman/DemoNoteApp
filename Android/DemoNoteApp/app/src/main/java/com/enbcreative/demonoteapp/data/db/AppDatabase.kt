@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.enbcreative.demonoteapp.data.db.dao.UserDao
 import com.enbcreative.demonoteapp.data.db.model.User
 
-@Database(entities = [User::class], version = 1)
+@Database(entities = [User::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getUserDao(): UserDao
 

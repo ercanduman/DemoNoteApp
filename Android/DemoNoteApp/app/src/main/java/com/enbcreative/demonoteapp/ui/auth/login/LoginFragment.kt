@@ -1,5 +1,6 @@
 package com.enbcreative.demonoteapp.ui.auth.login
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,10 +16,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.enbcreative.demonoteapp.LOGGED_ID
 import com.enbcreative.demonoteapp.R
+import com.enbcreative.demonoteapp.data.db.AppDatabase
+import com.enbcreative.demonoteapp.data.network.WebApi
+import com.enbcreative.demonoteapp.data.repository.UserRepository
 import com.enbcreative.demonoteapp.databinding.FragmentLoginBinding
 import com.enbcreative.demonoteapp.ui.auth.AuthViewModel
+import com.enbcreative.demonoteapp.ui.auth.AuthViewModelFactory
 import com.enbcreative.demonoteapp.ui.auth.ProcessListener
+import com.enbcreative.demonoteapp.ui.main.MainActivity
 import com.enbcreative.demonoteapp.utils.hide
 import com.enbcreative.demonoteapp.utils.logd
 import com.enbcreative.demonoteapp.utils.show
@@ -34,7 +41,13 @@ class LoginFragment : Fragment(), ProcessListener {
         val binding: FragmentLoginBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
 
-        val viewModel = ViewModelProvider(this).get(AuthViewModel::class.java)
+        val webApi = WebApi()
+        val db = AppDatabase(requireContext())
+        val repository = UserRepository(webApi, db)
+        val factory = AuthViewModelFactory(repository)
+
+        val viewModel = ViewModelProvider(this, factory).get(AuthViewModel::class.java)
+
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
         viewModel.listener = this
@@ -48,6 +61,7 @@ class LoginFragment : Fragment(), ProcessListener {
             findNavController().navigate(R.id.action_LoginFragment_to_SignUpFragment)
         }
 
+        if (LOGGED_ID) startMainActivity()
         initViews()
     }
 
@@ -86,7 +100,15 @@ class LoginFragment : Fragment(), ProcessListener {
 
     override fun onSuccess() {
         progress_bar_loading_login.hide()
-        requireContext().toast("Login finished")
+        requireContext().toast("Login finished Successfully! Start New Activity")
+        startMainActivity()
+    }
+
+    private fun startMainActivity() {
+        Intent(requireContext(), MainActivity::class.java).also {
+            it.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(it)
+        }
     }
 
     override fun onSuccessResult(result: LiveData<String>) {

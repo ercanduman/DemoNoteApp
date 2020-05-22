@@ -18,5 +18,5 @@ data class User(
      * To store only one user (authenticated user) CURRENT_USER_ID will be used.
      */
     @PrimaryKey(autoGenerate = false)
-    val userId = CURRENT_USER_ID
+    var userId = CURRENT_USER_ID
 }
