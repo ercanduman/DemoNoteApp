@@ -27,16 +27,17 @@ class AuthViewModel(private val repository: UserRepository) : ViewModel() {
             return
         }
 
-        // Success
-        listener?.onSuccess()
-
         if (TEST_MODE.not()) {
             Coroutines.main {
                 try {
                     val loginResponse = repository.login(email!!, password!!)
-                    _loginResult.value =
-                        loginResponse.user?.toString()
-                            ?: "User not Found! - ${loginResponse.message}"
+                    loginResponse.user?.let {
+                        _loginResult.value = it.toString()
+                        repository.saveUser(it)
+                        listener?.onSuccess()
+                        return@main
+                    }
+                    _loginResult.value = "User not Found! - ${loginResponse.message}"
                 } catch (e: ApiException) {
                     _loginResult.value = "Login failed with code: ${e.message}"
                 }
@@ -44,8 +45,10 @@ class AuthViewModel(private val repository: UserRepository) : ViewModel() {
         } else {
             try {
                 val result = LoginRepository(LoginDataSource()).login(email!!, password!!)
-                if (result is Result.Success) _loginResult.value = result.data.toString()
-                else _loginResult.value = "Login failed"
+                if (result is Result.Success) {
+                    _loginResult.value = result.data.toString()
+                    listener?.onSuccess()
+                } else _loginResult.value = "Login failed"
             } catch (e: Exception) {
                 logd("Login is failed....")
                 e.printStackTrace()
@@ -54,4 +57,6 @@ class AuthViewModel(private val repository: UserRepository) : ViewModel() {
 
         listener?.onSuccessResult(_loginResult)
     }
+
+    suspend fun getLoggedInUser() = repository.getUser()
 }

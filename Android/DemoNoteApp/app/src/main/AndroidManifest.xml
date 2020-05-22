@@ -23,6 +23,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.auth.AuthActivity" />
+        <activity android:name=".ui.main.MainActivity" />
     </application>
-
 </manifest>
