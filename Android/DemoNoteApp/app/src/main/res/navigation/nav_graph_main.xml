@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/NotesFragment"
-        android:name="com.enbcreative.demonoteapp.ui.main.NotesFragment"
+        android:name="com.enbcreative.demonoteapp.ui.main.notes.NotesFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_note_list">
 

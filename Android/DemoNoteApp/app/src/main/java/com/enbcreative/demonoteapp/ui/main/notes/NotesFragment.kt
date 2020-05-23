@@ -1,19 +1,19 @@
-package com.enbcreative.demonoteapp.ui.main
+package com.enbcreative.demonoteapp.ui.main.notes
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.enbcreative.demonoteapp.R
+import com.enbcreative.demonoteapp.data.backup.data.NoteDataSource
+import com.enbcreative.demonoteapp.utils.toast
+import kotlinx.android.synthetic.main.fragment_note_list.*
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 class NotesFragment : Fragment() {
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -24,8 +24,15 @@ class NotesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.findViewById<Button>(R.id.button_first).setOnClickListener {
-            findNavController().navigate(R.id.action_NotesFragment_to_NoteDetailsFragment)
+        // findNavController().navigate(R.id.action_NotesFragment_to_NoteDetailsFragment)
+
+        recycler_view_notes.adapter = notesAdapter
+        val notes = NoteDataSource().getNotes()
+        notesAdapter.submitItems(notes)
+        notesAdapter.listener = { _, note, pos ->
+            requireContext().toast("${note.id} at $pos clicked")
         }
     }
+
+    private val notesAdapter by lazy { NotesAdapter() }
 }
