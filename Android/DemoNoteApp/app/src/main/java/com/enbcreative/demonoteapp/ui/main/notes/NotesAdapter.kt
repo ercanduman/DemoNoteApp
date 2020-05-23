@@ -1,4 +1,4 @@
-package com.enbcreative.demonoteapp.ui.main
+package com.enbcreative.demonoteapp.ui.main.notes
 
 import com.enbcreative.demonoteapp.R
 import com.enbcreative.demonoteapp.data.db.model.note.Note

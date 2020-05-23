@@ -3,8 +3,10 @@ package com.enbcreative.demonoteapp
 import androidx.multidex.MultiDexApplication
 import com.enbcreative.demonoteapp.data.db.AppDatabase
 import com.enbcreative.demonoteapp.data.network.WebApi
+import com.enbcreative.demonoteapp.data.repository.NoteRepository
 import com.enbcreative.demonoteapp.data.repository.UserRepository
 import com.enbcreative.demonoteapp.ui.auth.AuthViewModelFactory
+import com.enbcreative.demonoteapp.ui.main.notes.NotesViewModelFactory
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.androidXModule
@@ -20,5 +22,7 @@ class MainApplication : MultiDexApplication(), KodeinAware {
         bind() from singleton { AppDatabase(instance()) }
         bind() from singleton { UserRepository(instance(), instance()) }
         bind() from provider { AuthViewModelFactory(instance()) }
+        bind() from singleton { NoteRepository(instance()) }
+        bind() from provider { NotesViewModelFactory(instance()) }
     }
 }

@@ -41,4 +41,5 @@
     <string name="note_dummy_date">23.04.2020 17:24</string>
     <string name="note_dummy_content">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero\'s De Finibus Bonorum et Malorum for use in a type specimen book.</string>
     <string name="save">Save</string>
+    <string name="no_data_found">No Data Found!</string>
 </resources>
