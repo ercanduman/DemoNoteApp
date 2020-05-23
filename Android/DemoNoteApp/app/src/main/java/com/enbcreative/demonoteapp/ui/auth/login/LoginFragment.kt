@@ -2,14 +2,11 @@ package com.enbcreative.demonoteapp.ui.auth.login
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.EditText
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
@@ -23,10 +20,7 @@ import com.enbcreative.demonoteapp.ui.auth.AuthViewModel
 import com.enbcreative.demonoteapp.ui.auth.AuthViewModelFactory
 import com.enbcreative.demonoteapp.ui.auth.ProcessListener
 import com.enbcreative.demonoteapp.ui.main.MainActivity
-import com.enbcreative.demonoteapp.utils.hide
-import com.enbcreative.demonoteapp.utils.logd
-import com.enbcreative.demonoteapp.utils.show
-import com.enbcreative.demonoteapp.utils.toast
+import com.enbcreative.demonoteapp.utils.*
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
@@ -63,34 +57,6 @@ class LoginFragment : Fragment(), KodeinAware, ProcessListener {
         initViews()
     }
 
-    private fun initViews() {
-        val userMail = edt_user_mail_login
-        val userPassword = edt_password_login
-        val loginButton = btn_login
-        userMail.afterTextChanged {
-            areFieldsValid(userMail.text.toString(), userPassword.text.toString())
-        }
-
-        userPassword.apply {
-            afterTextChanged {
-                areFieldsValid(userMail.text.toString(), userPassword.text.toString())
-            }
-            setOnEditorActionListener { _, actionId, _ ->
-                when (actionId) {
-                    EditorInfo.IME_ACTION_DONE -> {
-                        areFieldsValid(userMail.text.toString(), userPassword.text.toString())
-                    }
-                }
-                false
-            }
-
-            loginButton.setOnClickListener {
-                progress_bar_loading_login.show()
-
-            }
-        }
-    }
-
     override fun onStarted() {
         progress_bar_loading_login.show()
         requireContext().toast("Login started")
@@ -122,7 +88,34 @@ class LoginFragment : Fragment(), KodeinAware, ProcessListener {
         progress_bar_loading_login.hide()
     }
 
+    private fun initViews() {
+        val userMail = edt_user_mail_login
+        val userPassword = edt_password_login
+        userMail.afterTextChanged {
+            areFieldsValid(userMail.text.toString(), userPassword.text.toString())
+        }
+
+        userPassword.apply {
+            afterTextChanged {
+                areFieldsValid(userMail.text.toString(), userPassword.text.toString())
+            }
+            setOnEditorActionListener { _, actionId, _ ->
+                when (actionId) {
+                    EditorInfo.IME_ACTION_DONE -> {
+                        areFieldsValid(userMail.text.toString(), userPassword.text.toString())
+                    }
+                }
+                false
+            }
+
+            /* loginButton.setOnClickListener {
+                progress_bar_loading_login.show()
+            }*/
+        }
+    }
+
     private fun areFieldsValid(email: String, password: String) {
+        btn_login.isEnabled = false
         when {
             isUserEmailValid(email).not() -> {
                 edt_user_mail_login.error = getString(R.string.invalid_user_mail)
@@ -140,18 +133,4 @@ class LoginFragment : Fragment(), KodeinAware, ProcessListener {
 
     // A placeholder password check
     private fun isPassWordValid(password: String): Boolean = password.length > 5
-
-    /**
-     * Extension function to simplify setting on afterTextChanged action to EditText components
-     */
-    private fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-        addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                afterTextChanged.invoke(s.toString())
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
-    }
 }

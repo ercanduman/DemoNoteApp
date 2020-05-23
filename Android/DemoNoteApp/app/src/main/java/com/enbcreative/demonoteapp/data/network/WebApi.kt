@@ -17,6 +17,14 @@ interface WebApi {
         @Field("password") password: String
     ): Response<ApiResponse>
 
+    @FormUrlEncoded
+    @POST("signup")
+    suspend fun signup(
+        @Field("name") name: String,
+        @Field("email") email: String,
+        @Field("password") password: String
+    ): Response<ApiResponse>
+
     companion object {
         operator fun invoke(): WebApi {
             return Retrofit.Builder()

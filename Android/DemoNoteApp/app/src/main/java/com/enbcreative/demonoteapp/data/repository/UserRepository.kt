@@ -10,9 +10,11 @@ class UserRepository(
     private val api: WebApi,
     private val db: AppDatabase
 ) : SafeApiRequest() {
-    suspend fun login(email: String, password: String): ApiResponse {
-        return apiRequest { api.login(email, password) }
-    }
+    suspend fun login(email: String, password: String): ApiResponse =
+        apiRequest { api.login(email, password) }
+
+    suspend fun signUp(name: String, email: String, password: String): ApiResponse =
+        apiRequest { api.signup(name, email, password) }
 
     suspend fun saveUser(user: User) = db.getUserDao().upsert(user)
     suspend fun getUser() = db.getUserDao().getUser()
