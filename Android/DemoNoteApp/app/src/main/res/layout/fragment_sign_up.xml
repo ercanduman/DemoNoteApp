@@ -1,146 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#E2E2E2"
-    tools:context=".ui.auth.signup.SignUpFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.core.widget.NestedScrollView
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.enbcreative.demonoteapp.ui.auth.AuthViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#E2E2E2"
+        tools:context=".ui.auth.signup.SignUpFragment">
 
-        <RelativeLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/image_view_logo"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_centerHorizontal="true"
-                android:background="@drawable/bg_splash_screen_icon" />
-
-            <LinearLayout
-                android:id="@+id/linearLayout1"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/image_view_logo"
-                android:orientation="vertical">
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/image_view_logo"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/bg_splash_screen_icon" />
+
+                <LinearLayout
+                    android:id="@+id/linearLayout1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/image_view_logo"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="@string/app_name"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        android:textColor="#465A61"
+                        app:fontFamily="cursive" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="@string/welcome"
+                        android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+                        android:textColor="#969EEE"
+                        android:textStyle="bold"
+                        android:typeface="monospace" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/linearLayout1"
+                    android:background="#ffffff"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <EditText
+                        android:id="@+id/edt_sign_up_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_edit_text_box"
+                        android:drawableLeft="@drawable/ic_person_black"
+                        android:drawablePadding="16dp"
+                        android:hint="@string/name"
+                        android:inputType="text"
+                        android:padding="12dp"
+                        android:text="@={viewModel.name}" />
+
+                    <EditText
+                        android:id="@+id/edt_sign_up_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_edit_text_box"
+                        android:drawableLeft="@drawable/ic_email_black"
+                        android:drawablePadding="16dp"
+                        android:hint="@string/e_mail"
+                        android:inputType="textEmailAddress"
+                        android:padding="12dp"
+                        android:text="@={viewModel.email}" />
+
+                    <EditText
+                        android:id="@+id/edt_sign_up_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_edit_text_box"
+                        android:drawableStart="@drawable/ic_lock_black"
+                        android:drawablePadding="16dp"
+                        android:hint="@string/password"
+                        android:inputType="textPassword"
+                        android:padding="12dp"
+                        android:text="@={viewModel.password}" />
+
+                    <EditText
+                        android:id="@+id/edt_sign_up_password_confirm"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="12dp"
+                        android:background="@drawable/bg_edit_text_box"
+                        android:drawableStart="@drawable/ic_lock_black"
+                        android:drawablePadding="16dp"
+                        android:hint="@string/confirm_password"
+                        android:inputType="textPassword"
+                        android:padding="12dp"
+                        android:text="@={viewModel.passwordConfirmed}" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:text="@string/forget_password"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_sign_up"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="6dp"
+                        android:enabled="false"
+                        android:onClick="@{viewModel::onSignUpButtonClick}"
+                        android:text="@string/sign_up"
+                        android:textAllCaps="false" />
+
+                </LinearLayout>
 
                 <TextView
+                    android:id="@+id/tv_sign_in_here"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="@string/app_name"
+                    android:layout_below="@id/linearLayout2"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="12dp"
+                    android:text="Already have an account?\nSign in Here"
+                    android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:textColor="#465A61"
-                    app:fontFamily="cursive" />
+                    android:textColor="@color/colorPrimary" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="@string/welcome"
-                    android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Display2"
-                    android:textColor="#969EEE"
-                    android:textStyle="bold"
-                    android:typeface="monospace" />
+            </RelativeLayout>
+        </androidx.core.widget.NestedScrollView>
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/linearLayout2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/linearLayout1"
-                android:background="#ffffff"
-                android:orientation="vertical"
-                android:padding="18dp">
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="12dp"
-                    android:background="@drawable/bg_edit_text_box"
-                    android:drawableLeft="@drawable/ic_person_black"
-                    android:drawablePadding="16dp"
-                    android:hint="@string/name"
-                    android:inputType="text"
-                    android:padding="12dp" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="12dp"
-                    android:background="@drawable/bg_edit_text_box"
-                    android:drawableLeft="@drawable/ic_email_black"
-                    android:drawablePadding="16dp"
-                    android:hint="@string/e_mail"
-                    android:inputType="textEmailAddress"
-                    android:padding="12dp" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="12dp"
-                    android:background="@drawable/bg_edit_text_box"
-                    android:drawableLeft="@drawable/ic_lock_black"
-                    android:drawablePadding="16dp"
-                    android:hint="password"
-                    android:inputType="textPassword"
-                    android:padding="12dp" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="12dp"
-                    android:background="@drawable/bg_edit_text_box"
-                    android:drawableLeft="@drawable/ic_lock_black"
-                    android:drawablePadding="16dp"
-                    android:hint="confirm password"
-                    android:inputType="textPassword"
-                    android:padding="12dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:text="Forget Password?"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/colorPrimaryDark" />
-
-                <Button
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="Sign Up"
-                    android:textAllCaps="false" />
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/tv_sign_in_here"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/linearLayout2"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="12dp"
-                android:text="Already have an account?\nSign in Here"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:textColor="@color/colorPrimary" />
-
-        </RelativeLayout>
-    </androidx.core.widget.NestedScrollView>
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|center_vertical"
-        android:visibility="invisible" />
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <ProgressBar
+            android:id="@+id/progress_bar_sign_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:visibility="invisible"
+            tools:visibility="visible" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

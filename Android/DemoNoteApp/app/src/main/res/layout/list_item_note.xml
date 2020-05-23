@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="note"
+            type="com.enbcreative.demonoteapp.data.db.model.note.Note" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/note_list_item_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{note.date}"
+                android:textColor="#988E8E"
+                android:textSize="14sp"
+                tools:text="@string/note_dummy_date" />
+
+            <TextView
+                android:id="@+id/note_list_item_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/note_list_item_date"
+                android:background="@color/colorWhite"
+                android:padding="5dp"
+                android:text="@{note.content}"
+                android:textColor="@color/colorAccent"
+                android:textSize="20sp"
+                tools:text="@string/note_dummy_content" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

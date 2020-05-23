@@ -1,4 +1,4 @@
-package com.enbcreative.demonoteapp.data.db.model
+package com.enbcreative.demonoteapp.data.db.model.user
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

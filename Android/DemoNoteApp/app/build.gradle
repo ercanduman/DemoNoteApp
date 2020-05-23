@@ -61,8 +61,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
 
     // Kodein Dependency Injection
-    implementation 'org.kodein.di:kodein-di-framework-android-core:6.5.5'
-    implementation 'org.kodein.di:kodein-di-framework-android-x:6.5.5'
+    implementation "org.kodein.di:kodein-di-generic-jvm:6.5.0"
+    implementation "org.kodein.di:kodein-di-framework-android-x:6.5.5"
 
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
@@ -75,4 +75,7 @@ dependencies {
     implementation "androidx.room:room-ktx:2.2.5"
     implementation "androidx.room:room-runtime:2.2.5"
     kapt "androidx.room:room-compiler:2.2.5"
+
+    // Multidex
+    implementation 'com.android.support:multidex:1.0.3'
 }

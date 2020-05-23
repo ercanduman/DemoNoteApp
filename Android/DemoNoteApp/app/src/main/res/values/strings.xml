@@ -7,6 +7,8 @@
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome!"</string>
     <string name="invalid_user_mail">Not a valid E-mail</string>
+    <string name="invalid_name">Name must be >2 characters</string>
+    <string name="invalid_passwords_not_matched">Passwords not matched!</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="login">Login</string>
@@ -29,4 +31,14 @@
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
+    <string name="notes_fragment_message">Note List will be displayed here…</string>
+    <string name="notes_details_fragment_message">Note Details will be displayed here…</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="forget_password">Forget Password?</string>
+    <string name="note_content">Note content</string>
+    <string name="note_dummy_date">23.04.2020 17:24</string>
+    <string name="note_dummy_content">Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero\'s De Finibus Bonorum et Malorum for use in a type specimen book.</string>
+    <string name="save">Save</string>
 </resources>
