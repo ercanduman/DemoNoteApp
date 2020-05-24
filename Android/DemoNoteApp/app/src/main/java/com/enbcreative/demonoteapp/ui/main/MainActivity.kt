@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.enbcreative.demonoteapp.DATE_FORMAT
 import com.enbcreative.demonoteapp.R
 import com.enbcreative.demonoteapp.data.db.model.note.Note
 import com.enbcreative.demonoteapp.ui.main.notes.NotesAdapter
@@ -24,6 +25,8 @@ import kotlinx.android.synthetic.main.dialog_add_note.view.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainActivity : AppCompatActivity(), KodeinAware {
     override val kodein by closestKodein()
@@ -92,7 +95,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         if (note != null) {
             currentNote = note
             content.setText(note.content)
-        } else currentNote = Note("", "")
+        } else currentNote = Note("", getCurrentDate())
 
         val builder = AlertDialog.Builder(this)
             .setView(dialog)
@@ -119,4 +122,6 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             }
         builder.create().show()
     }
+
+    private fun getCurrentDate(): String = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(Date())
 }
