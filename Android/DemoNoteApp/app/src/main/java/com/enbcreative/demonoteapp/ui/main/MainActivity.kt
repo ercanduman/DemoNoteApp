@@ -10,6 +10,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.enbcreative.demonoteapp.DATE_FORMAT
 import com.enbcreative.demonoteapp.R
 import com.enbcreative.demonoteapp.data.db.model.note.Note
@@ -18,7 +20,6 @@ import com.enbcreative.demonoteapp.ui.main.notes.NotesViewModel
 import com.enbcreative.demonoteapp.ui.main.notes.NotesViewModelFactory
 import com.enbcreative.demonoteapp.utils.Coroutines
 import com.enbcreative.demonoteapp.utils.toast
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main_content.*
 import kotlinx.android.synthetic.main.dialog_add_note.view.*
@@ -37,22 +38,36 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
-        fab_main_activity.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-            upsertNote(null)
-        }
+        fab_main_activity.setOnClickListener { upsertNote(null) }
         bindData()
     }
 
     private fun bindData() = Coroutines.main {
         viewModel = ViewModelProvider(this, factory).get(NotesViewModel::class.java)
         viewModel.getAllNotes().observe(this, Observer { handleData(it) })
+        swipeToDelete()
+    }
+
+    private fun swipeToDelete() {
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val note = notesAdapter.getCurrentItem(position)
+                viewModel.delete(note)
+                toast("Note deleted.")
+            }
+        }).attachToRecyclerView(recycler_view_notes)
     }
 
     private fun handleData(notes: List<Note>) {
-        toast("${notes.size} notes found!")
         if (notes.isEmpty().not()) initRecyclerView(notes)
         else dataExist(false)
     }
@@ -61,10 +76,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         dataExist(true)
         recycler_view_notes.adapter = notesAdapter
         notesAdapter.submitItems(notes)
-        notesAdapter.listener = { _, note, position ->
-            toast("${note.id} at $position clicked")
-            upsertNote(note)
-        }
+        notesAdapter.listener = { _, note, _ -> upsertNote(note) }
     }
 
     private fun dataExist(dataExist: Boolean) {
@@ -78,8 +90,6 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     }
 
     private val notesAdapter by lazy { NotesAdapter() }
-
-
     private fun upsertNote(note: Note?) {
         val inflater = LayoutInflater.from(this)
 
@@ -95,33 +105,31 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         if (note != null) {
             currentNote = note
             content.setText(note.content)
-        } else currentNote = Note("", getCurrentDate())
+        } else currentNote = Note("", "")
 
         val builder = AlertDialog.Builder(this)
             .setView(dialog)
             .setCancelable(false)
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .setPositiveButton(getString(R.string.save)) { d, _ ->
-                toast("Save clicked")
                 currentNote.content = content.text.toString()
+                currentNote.date = getCurrentDate()
                 if (note != null) {
-                    Coroutines.main {
-                        viewModel.update(currentNote)
-                    }.invokeOnCompletion {
-                        d.dismiss()
-                        toast("Note Updated")
-                    }
+                    Coroutines.main { viewModel.update(currentNote) }
+                        .invokeOnCompletion {
+                            d.dismiss()
+                            toast("Note Updated")
+                        }
                 } else {
-                    Coroutines.main {
-                        viewModel.save(currentNote)
-                    }.invokeOnCompletion {
-                        toast("New Note Added")
-                        d.dismiss()
-                    }
+                    Coroutines.main { viewModel.save(currentNote) }
+                        .invokeOnCompletion {
+                            d.dismiss()
+                            toast("New Note Added")
+                        }
                 }
             }
         builder.create().show()
     }
 
-    private fun getCurrentDate(): String = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(Date())
+    private fun getCurrentDate() = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(Date())
 }
