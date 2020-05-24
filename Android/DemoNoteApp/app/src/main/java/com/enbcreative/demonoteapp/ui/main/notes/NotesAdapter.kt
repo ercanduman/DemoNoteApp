@@ -12,10 +12,12 @@ class NotesAdapter : BaseRecyclerView<Note, ListItemNoteBinding>() {
         holder: Companion.BaseViewHolder<ListItemNoteBinding>,
         position: Int
     ) {
-        val currentNote = itemList[position]
+        val currentNote = getCurrentItem(position)
         holder.binding.note = currentNote
         holder.binding.root.setOnClickListener {
             listener?.invoke(it, currentNote, position)
         }
     }
+
+    fun getCurrentItem(position: Int): Note = itemList[position]
 }

@@ -45,4 +45,5 @@
     <string name="dialog_note_hint">Add your note here…</string>
     <string name="new_note">New Note</string>
     <string name="edit_note">Edit Note</string>
+    <string name="cancel">Cancel</string>
 </resources>
