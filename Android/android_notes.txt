@@ -1,1 +1,15 @@
 This file contains all notes for containing module.
+
+GitHub\DemoNoteApp\Android\DemoNoteApp\apk\ dizinin altında 2 tane apk dosyası var.
+
+Android studio ile kodları derleme imkanı bulunamama durumunda bu apk dosyaları telefonlarda denenebilir.
+
+1- notes.apk file sign-in ekranına gitmeden, başarılı bir şekilde login olmuş kullanıcının göreceği ekran.
+Not ekleme, düzenleme ve silme işlemlerinin test edilebir ekranı.
+
+2- sign_in.apk ise giriş yapılarak kullanılabilecek apk dosyası. Bu ekran sign in olmaya ya da sign up ekranlarının test edebilebileceği ekran.
+Giriş için;
+
+mail 	= mail@mail.com
+şifre	= 123456
+
