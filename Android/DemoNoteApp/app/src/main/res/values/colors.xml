@@ -4,5 +4,11 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="colorWhite">#FFF</color>
-    <color name="colorGrey">#5A5454</color>
+
+    <color name="hero_gray_dark">#4E4E4E</color>
+    <color name="hero_gray_light">#858585</color>
+    <color name="note_list_no_notes">#999</color>
+    <color name="note_list_hint_enter_note">#89c3c3c3</color>
+    <color name="note_list_date_color">#858585</color>
+    <color name="note_list_text_color">#232323</color>
 </resources>
