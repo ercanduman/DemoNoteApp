@@ -4,10 +4,7 @@ import com.enbcreative.demonoteapp.BASE_API_URL
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.POST
-
+import retrofit2.http.*
 
 interface WebApi {
     @FormUrlEncoded
@@ -24,6 +21,13 @@ interface WebApi {
         @Field("email") email: String,
         @Field("password") password: String
     ): Response<ApiResponse>
+
+    /**
+     * URL: BASE_API_URL + "notes?userId=1"
+     * Ex: http://dustsite.blogspot.com/notes?userId=1
+     */
+    @GET("notes")
+    suspend fun getNotes(@Query("userId") userId: Int): Response<NotesResponse>
 
     companion object {
         operator fun invoke(): WebApi {

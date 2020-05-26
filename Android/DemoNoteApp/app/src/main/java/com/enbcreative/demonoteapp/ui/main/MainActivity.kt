@@ -33,7 +33,6 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     override val kodein by closestKodein()
     private val factory by instance<NotesViewModelFactory>()
     private lateinit var viewModel: NotesViewModel
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -44,7 +43,19 @@ class MainActivity : AppCompatActivity(), KodeinAware {
 
     private fun bindData() = Coroutines.main {
         viewModel = ViewModelProvider(this, factory).get(NotesViewModel::class.java)
-        viewModel.getAllNotes().observe(this, Observer { handleData(it) })
+        viewModel.notes.await().observe(this, Observer { handleData(it) })
+    }
+
+    private fun handleData(notes: List<Note>) {
+        if (notes.isEmpty().not()) initRecyclerView(notes)
+        else dataExist(false)
+    }
+
+    private fun initRecyclerView(notes: List<Note>) {
+        dataExist(true)
+        recycler_view_notes.adapter = notesAdapter
+        notesAdapter.submitItems(notes)
+        notesAdapter.listener = { _, note, _ -> upsertNote(note) }
         swipeToDelete()
     }
 
@@ -65,18 +76,6 @@ class MainActivity : AppCompatActivity(), KodeinAware {
                 toast("Note deleted.")
             }
         }).attachToRecyclerView(recycler_view_notes)
-    }
-
-    private fun handleData(notes: List<Note>) {
-        if (notes.isEmpty().not()) initRecyclerView(notes)
-        else dataExist(false)
-    }
-
-    private fun initRecyclerView(notes: List<Note>) {
-        dataExist(true)
-        recycler_view_notes.adapter = notesAdapter
-        notesAdapter.submitItems(notes)
-        notesAdapter.listener = { _, note, _ -> upsertNote(note) }
     }
 
     private fun dataExist(dataExist: Boolean) {
