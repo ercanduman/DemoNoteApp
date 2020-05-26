@@ -5,10 +5,10 @@ import androidx.room.*
 
 @Dao
 interface NoteDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(note: Note)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveAllNotes(notes: List<Note>)
 
     @Update

@@ -10,7 +10,6 @@ import com.enbcreative.demonoteapp.data.backup.data.Result
 import com.enbcreative.demonoteapp.data.repository.UserRepository
 import com.enbcreative.demonoteapp.utils.ApiException
 import com.enbcreative.demonoteapp.utils.Coroutines
-import com.enbcreative.demonoteapp.utils.logd
 
 class AuthViewModel(private val repository: UserRepository) : ViewModel() {
     var name: String? = null
@@ -42,7 +41,7 @@ class AuthViewModel(private val repository: UserRepository) : ViewModel() {
                         return@main
                     }
                     _loginResult.value = "User not Found! - ${loginResponse.message}"
-                } catch (e: ApiException) {
+                } catch (e: Exception) {
                     _loginResult.value = "Login failed with code: ${e.message}"
                 }
             }
@@ -54,8 +53,7 @@ class AuthViewModel(private val repository: UserRepository) : ViewModel() {
                     listener?.onSuccess()
                 } else _loginResult.value = "Login failed"
             } catch (e: Exception) {
-                logd("Login is failed....")
-                e.printStackTrace()
+                _loginResult.value = "Login failed with code: ${e.message}"
             }
         }
 
