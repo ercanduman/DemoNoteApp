@@ -6,6 +6,7 @@ import com.enbcreative.demonoteapp.data.db.AppDatabase
 import com.enbcreative.demonoteapp.data.db.model.note.Note
 import com.enbcreative.demonoteapp.data.network.SafeApiRequest
 import com.enbcreative.demonoteapp.data.network.WebApi
+import com.enbcreative.demonoteapp.data.prefs.Preferences
 import com.enbcreative.demonoteapp.utils.Coroutines
 import com.enbcreative.demonoteapp.utils.isFetchNeeded
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +14,8 @@ import kotlinx.coroutines.withContext
 
 class NoteRepository(
     private val db: AppDatabase,
-    private val api: WebApi
+    private val api: WebApi,
+    private val preferences: Preferences
 ) : SafeApiRequest() {
     private val noteList = MutableLiveData<List<Note>>()
 
@@ -26,20 +28,22 @@ class NoteRepository(
     fun deleteNote(note: Note) = Coroutines.io { db.getNoteDao().delete(note) }
     suspend fun getAllNotes(): LiveData<List<Note>> {
         return withContext(Dispatchers.IO) {
-            val userId = 1 // TODO: Preferences.getUserID()
-            fetchNotes(userId)
+            fetchNotes()
             db.getNoteDao().getAllNotes()
         }
     }
 
-    private suspend fun fetchNotes(userId: Int) {
-        // TODO: Preferences.getLastSavedTime()
-        val currentTime = System.currentTimeMillis().toString()
-        if (isFetchNeeded(currentTime)) {
+    private suspend fun fetchNotes() {
+        val userId = preferences.getUserID()
+        val currentTime = preferences.getLastTime()
+        if (currentTime.isNullOrEmpty() || isFetchNeeded(currentTime)) {
             val notes = apiRequest { api.getNotes(userId) }
             noteList.postValue(notes.notes)
         }
     }
 
-    private fun saveNotes(notes: List<Note>) = Coroutines.io { db.getNoteDao().saveAllNotes(notes) }
+    private fun saveNotes(notes: List<Note>) = Coroutines.io {
+        preferences.saveLastTime(System.currentTimeMillis().toString())
+        db.getNoteDao().saveAllNotes(notes)
+    }
 }
