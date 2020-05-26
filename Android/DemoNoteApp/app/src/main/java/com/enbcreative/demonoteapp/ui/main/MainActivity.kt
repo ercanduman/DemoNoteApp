@@ -18,6 +18,7 @@ import com.enbcreative.demonoteapp.data.db.model.note.Note
 import com.enbcreative.demonoteapp.ui.main.notes.NotesAdapter
 import com.enbcreative.demonoteapp.ui.main.notes.NotesViewModel
 import com.enbcreative.demonoteapp.ui.main.notes.NotesViewModelFactory
+import com.enbcreative.demonoteapp.utils.ApiException
 import com.enbcreative.demonoteapp.utils.Coroutines
 import com.enbcreative.demonoteapp.utils.toast
 import kotlinx.android.synthetic.main.activity_main.*
@@ -42,17 +43,25 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun bindData() = Coroutines.main {
-        viewModel = ViewModelProvider(this, factory).get(NotesViewModel::class.java)
-        viewModel.notes.await().observe(this, Observer { handleData(it) })
+        try {
+            viewModel = ViewModelProvider(this, factory).get(NotesViewModel::class.java)
+            viewModel.notes.await().observe(this, Observer { handleData(it) })
+        } catch (e: ApiException) {
+            showContent(false, e.message)
+            // e.printStackTrace()
+        } catch (e: Exception) {
+            showContent(false, e.message)
+            // e.printStackTrace()
+        }
     }
 
     private fun handleData(notes: List<Note>) {
         if (notes.isEmpty().not()) initRecyclerView(notes)
-        else dataExist(false)
+        else showContent(false, getString(R.string.no_data_found))
     }
 
     private fun initRecyclerView(notes: List<Note>) {
-        dataExist(true)
+        showContent(true, null)
         recycler_view_notes.adapter = notesAdapter
         notesAdapter.submitItems(notes)
         notesAdapter.listener = { _, note, _ -> upsertNote(note) }
@@ -78,13 +87,16 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         }).attachToRecyclerView(recycler_view_notes)
     }
 
-    private fun dataExist(dataExist: Boolean) {
+    private fun showContent(dataExist: Boolean, message: String?) {
         if (dataExist) {
             recycler_view_notes.visibility = View.VISIBLE
             no_data_found_main.visibility = View.GONE
         } else {
             recycler_view_notes.visibility = View.GONE
-            no_data_found_main.visibility = View.VISIBLE
+            no_data_found_main?.also {
+                it.visibility = View.VISIBLE
+                it.text = message
+            }
         }
     }
 
