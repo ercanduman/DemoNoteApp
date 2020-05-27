@@ -20,7 +20,7 @@ class AuthViewModel(private val repository: UserRepository) : ViewModel() {
     var listener: ProcessListener? = null
 
     private val _loginResult = MutableLiveData<String>()
-    suspend fun getLoggedInUser() = repository.getUser()
+    fun getLoggedInUser() = repository.getUser()
 
     fun onLoginButtonClick(v: View) {
         listener?.onStarted()
@@ -40,7 +40,7 @@ class AuthViewModel(private val repository: UserRepository) : ViewModel() {
                         listener?.onSuccess()
                         return@main
                     }
-                    _loginResult.value = "User not Found! - ${loginResponse.message}"
+                    _loginResult.value = loginResponse.message
                 } catch (e: Exception) {
                     _loginResult.value = "Login failed with code: ${e.message}"
                 }

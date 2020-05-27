@@ -8,18 +8,19 @@ import retrofit2.http.*
 
 interface WebApi {
     @FormUrlEncoded
-    @POST("login")
+    @POST("api.php?apicall=login")
     suspend fun login(
         @Field("email") email: String,
         @Field("password") password: String
     ): Response<ApiResponse>
 
     @FormUrlEncoded
-    @POST("signup")
+    @POST("api.php?apicall=signup")
     suspend fun signup(
-        @Field("name") name: String,
+        @Field("username") name: String,
         @Field("email") email: String,
-        @Field("password") password: String
+        @Field("password") password: String,
+        @Field("gender") gender: String? = "male"
     ): Response<ApiResponse>
 
     /**

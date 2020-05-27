@@ -47,4 +47,7 @@
     <string name="edit_note">Edit Note</string>
     <string name="cancel">Cancel</string>
     <string name="already_have_account_text">Already have an account?\nSign in Here</string>
+    <string name="sign_out">Sign out</string>
+    <string name="ok">OK</string>
+    <string name="title_dialog_sign_out">Are your sure you want to sign out?</string>
 </resources>
