@@ -5,9 +5,9 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Note(
-    var content: String,
-    var date: String,
-    val userId: Int? = 0,
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0
+    val id: Int = 0,
+    val userId: Int? = 0,
+    var content: String,
+    var created_at: String
 )

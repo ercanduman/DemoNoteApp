@@ -14,8 +14,8 @@
 
   $response = array();
 
-  if (isset($_GET['apicall'])){
-    switch ($_GET['apicall']) {
+  if (isset($_GET['enbapicall'])){
+    switch ($_GET['enbapicall']) {
         case 'login':
             if(parametersAvailable(array('email','password'))) {
                 $email = $_POST['email'];
@@ -98,6 +98,42 @@
                 $response['message'] = 'Required parameters missing. Please make sure that username, email and password available for signup execution.';
              }
            break;
+        case 'notes':
+            if(parametersAvailable(array('userId'))) {
+                $userId = $_POST['userId'];
+
+                // Database query
+                $statement = $connection -> prepare("SELECT id, userId, content, created_at FROM notes WHERE userId = ?");
+                $statement -> bind_param("s", $userId);
+                $statement -> execute();
+                $statement -> store_result();
+
+                if($statement -> num_rows > 0) {
+                    $statement -> bind_result($id, $userId, $content, $created_at);
+                    $notes = array();
+                    while($statement -> fetch()) {
+                        $note = array(
+                            'id' => $id,
+                            'userId' => $userId,
+                            'content' => $content,
+                            'created_at' => $created_at);
+                        // push single note into final response array
+                        array_push($notes, $note);
+                     }
+
+                    $response['error'] = false;
+                    $response['message'] = 'Execution successful.';
+                    $response['notes'] = $notes;
+                    $statement -> close();
+                } else {
+                    $response['error'] = true;
+                    $response['message'] = 'User has no any notes yet.';
+                }
+            } else {
+                $response['error'] = true;
+                $response['message'] = 'Required parameter userId is missing.';
+            }
+           break;
         default:
             $response['error'] = true;
             $response['message'] = 'Invalid execution... API should be called for login or signup operations.';
@@ -108,6 +144,7 @@
        $response['message'] = 'Invalid API call';
   }
 
+  header('Content-Type:Application/json');
   echo json_encode($response);
 
   function parametersAvailable($params) {
