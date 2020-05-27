@@ -17,9 +17,10 @@ interface WebApi {
     @FormUrlEncoded
     @POST("api.php?apicall=signup")
     suspend fun signup(
-        @Field("name") name: String,
+        @Field("username") name: String,
         @Field("email") email: String,
-        @Field("password") password: String
+        @Field("password") password: String,
+        @Field("gender") gender: String? = "male"
     ): Response<ApiResponse>
 
     /**
