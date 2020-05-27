@@ -14,12 +14,27 @@
         android:id="@+id/container_fragment_login"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/colorWhite"
         android:padding="@dimen/activity_horizontal_margin"
         tools:context=".ui.auth.login.LoginFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <ProgressBar
+                android:id="@+id/progress_bar_loading_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/edt_user_mail_login"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.8"
+                tools:visibility="visible" />
 
             <EditText
                 android:id="@+id/edt_user_mail_login"
@@ -34,7 +49,8 @@
                 android:text="@={viewModel.email}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:importantForAutofill="no" />
 
             <EditText
                 android:id="@+id/edt_password_login"
@@ -50,7 +66,8 @@
                 android:text="@={viewModel.password}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edt_user_mail_login" />
+                app:layout_constraintTop_toBottomOf="@+id/edt_user_mail_login"
+                android:autofillHints="" />
 
 
             <com.google.android.material.button.MaterialButton
@@ -69,24 +86,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/edt_password_login"
                 app:layout_constraintVertical_bias="0.4" />
-
-            <ProgressBar
-                android:id="@+id/progress_bar_loading_login"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="64dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginBottom="64dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/edt_password_login"
-                app:layout_constraintHorizontal_bias="0.497"
-                app:layout_constraintStart_toStartOf="@+id/edt_password_login"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.4"
-                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/tv_login_sign_up"

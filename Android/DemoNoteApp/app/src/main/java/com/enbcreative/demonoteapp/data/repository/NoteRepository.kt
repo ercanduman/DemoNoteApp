@@ -2,7 +2,7 @@ package com.enbcreative.demonoteapp.data.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.enbcreative.demonoteapp.TEST_MODE
+import com.enbcreative.demonoteapp.DATA_FROM_ROOM
 import com.enbcreative.demonoteapp.data.db.AppDatabase
 import com.enbcreative.demonoteapp.data.db.model.note.Note
 import com.enbcreative.demonoteapp.data.network.SafeApiRequest
@@ -29,7 +29,7 @@ class NoteRepository(
     fun deleteNote(note: Note) = Coroutines.io { db.getNoteDao().delete(note) }
     suspend fun getAllNotes(): LiveData<List<Note>> {
         return withContext(Dispatchers.IO) {
-            if (TEST_MODE.not())fetchNotes()
+            if (DATA_FROM_ROOM.not()) fetchNotes()
             db.getNoteDao().getAllNotes()
         }
     }

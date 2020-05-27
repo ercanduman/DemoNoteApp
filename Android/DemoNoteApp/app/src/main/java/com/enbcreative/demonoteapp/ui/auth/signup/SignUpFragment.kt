@@ -1,5 +1,6 @@
 package com.enbcreative.demonoteapp.ui.auth.signup
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import com.enbcreative.demonoteapp.databinding.FragmentSignUpBinding
 import com.enbcreative.demonoteapp.ui.auth.AuthViewModel
 import com.enbcreative.demonoteapp.ui.auth.AuthViewModelFactory
 import com.enbcreative.demonoteapp.ui.auth.ProcessListener
+import com.enbcreative.demonoteapp.ui.main.MainActivity
 import com.enbcreative.demonoteapp.utils.*
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 import org.kodein.di.KodeinAware
@@ -53,6 +55,7 @@ class SignUpFragment : Fragment(), KodeinAware, ProcessListener {
     override fun onSuccess() {
         progress_bar_sign_up.hide()
         requireContext().toast("Sign Up finished Successfully! Start New Activity")
+        startMainActivity()
     }
 
     override fun onSuccessResult(result: LiveData<String>) {
@@ -66,6 +69,13 @@ class SignUpFragment : Fragment(), KodeinAware, ProcessListener {
         requireContext().toast("Execution failed: $message")
         logd("Execution failed: $message")
         progress_bar_sign_up.hide()
+    }
+
+    private fun startMainActivity() {
+        Intent(requireContext(), MainActivity::class.java).also {
+            it.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(it)
+        }
     }
 
     private fun initViews() {
