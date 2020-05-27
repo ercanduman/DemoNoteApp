@@ -78,6 +78,7 @@ class LoginFragment : Fragment(), KodeinAware, ProcessListener {
     override fun onSuccessResult(result: LiveData<String>) {
         result.observe(this, Observer {
             tv_login_sign_up.text = it
+            logd("onSuccessResult: $it")
             progress_bar_loading_login.hide()
         })
     }
