@@ -1,7 +1,7 @@
 package com.enbcreative.demonoteapp
 
 const val TEST_MODE = false
-const val DATA_FROM_ROOM= true
+const val DATA_FROM_ROOM = false
 const val LOGGED_ID = false
 const val APP_DB_VERSION = 1
 const val USER_ID_INVALID = -1

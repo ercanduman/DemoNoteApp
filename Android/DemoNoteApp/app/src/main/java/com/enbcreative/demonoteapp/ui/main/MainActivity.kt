@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         if (note != null) {
             currentNote = note
             content.setText(note.content)
-        } else currentNote = Note("", "")
+        } else currentNote = Note(content = "", created_at = "")
 
         val builder = AlertDialog.Builder(this)
             .setView(dialog)
@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             .setNegativeButton(getString(R.string.cancel), null)
             .setPositiveButton(getString(R.string.save)) { d, _ ->
                 currentNote.content = content.text.toString()
-                currentNote.date = getCurrentDate()
+                currentNote.created_at = getCurrentDate()
                 if (note != null) {
                     Coroutines.main { viewModel.update(currentNote) }
                         .invokeOnCompletion {
