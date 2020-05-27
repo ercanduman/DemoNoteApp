@@ -10,6 +10,7 @@ import com.enbcreative.demonoteapp.data.network.WebApi
 import com.enbcreative.demonoteapp.data.prefs.Preferences
 import com.enbcreative.demonoteapp.utils.Coroutines
 import com.enbcreative.demonoteapp.utils.isFetchNeeded
+import com.enbcreative.demonoteapp.utils.logd
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -18,10 +19,10 @@ class NoteRepository(
     private val api: WebApi,
     private val preferences: Preferences
 ) : SafeApiRequest() {
-    private val noteList = MutableLiveData<List<Note>>()
+    private val noteList = MutableLiveData<List<Note>?>()
 
     init {
-        noteList.observeForever { saveNotes(it) }
+        noteList.observeForever { it?.let { notes -> saveNotes(notes) } }
     }
 
     fun saveNote(note: Note) = Coroutines.io { db.getNoteDao().insert(note) }
@@ -35,11 +36,13 @@ class NoteRepository(
     }
 
     private suspend fun fetchNotes() {
-        val userId = preferences.getUserID()
         val currentTime = preferences.getLastTime()
         if (currentTime.isNullOrEmpty() || isFetchNeeded(currentTime)) {
-            val notes = apiRequest { api.getNotes(userId) }
-            noteList.postValue(notes.notes)
+            val userId = preferences.getUserID()
+            logd("Fetching note list for userId: $userId")
+            val response = apiRequest { api.getNotes(userId) }
+            logd("Api response message: ${response.message}")
+            noteList.postValue(response.notes)
         }
     }
 
