@@ -1,8 +1,11 @@
 package com.enbcreative.demonoteapp.ui.main
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -15,9 +18,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.enbcreative.demonoteapp.DATE_FORMAT
 import com.enbcreative.demonoteapp.R
 import com.enbcreative.demonoteapp.data.db.model.note.Note
+import com.enbcreative.demonoteapp.data.prefs.Preferences
 import com.enbcreative.demonoteapp.ui.main.notes.NotesAdapter
 import com.enbcreative.demonoteapp.ui.main.notes.NotesViewModel
 import com.enbcreative.demonoteapp.ui.main.notes.NotesViewModelFactory
+import com.enbcreative.demonoteapp.ui.splash.SplashActivity
 import com.enbcreative.demonoteapp.utils.ApiException
 import com.enbcreative.demonoteapp.utils.Coroutines
 import com.enbcreative.demonoteapp.utils.toast
@@ -33,6 +38,7 @@ import java.util.*
 class MainActivity : AppCompatActivity(), KodeinAware {
     override val kodein by closestKodein()
     private val factory by instance<NotesViewModelFactory>()
+    private val preferences by instance<Preferences>()
 
     private lateinit var viewModel: NotesViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,6 +89,31 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     }
 
     private val notesAdapter by lazy { NotesAdapter() }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_activity_main, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.sign_out_main -> showSignOutDialog()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun showSignOutDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.title_dialog_sign_out))
+            .setNegativeButton(getString(R.string.cancel), null)
+            .setPositiveButton(getString(R.string.ok)) { _, _ ->
+                preferences.signOut()
+                Intent(this, SplashActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(this)
+                }
+            }.create().show()
+    }
+
     private fun upsertNote(note: Note?) {
         val inflater = LayoutInflater.from(this)
 

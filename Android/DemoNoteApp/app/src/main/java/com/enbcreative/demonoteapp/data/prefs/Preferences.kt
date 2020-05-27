@@ -11,7 +11,12 @@ class Preferences(context: Context) {
     fun getUserID() = preference.getInt(KEY_USER_ID, USER_ID_INVALID)
     fun getLastTime() = preference.getString(KEY_LAST_TIME, null)
     fun saveUserID(userId: Int) = preference.edit().putInt(KEY_USER_ID, userId).apply()
-    fun saveLastTime(time: String) = preference.edit().putString(KEY_LAST_TIME, time).apply()
+    fun saveLastTime(time: String?) = preference.edit().putString(KEY_LAST_TIME, time).apply()
+
+    fun signOut() {
+        saveUserID(USER_ID_INVALID)
+        saveLastTime(null)
+    }
 
     companion object {
         private const val KEY_USER_ID = "com.enbcreative.demonoteapp.KEY_USER_ID"
