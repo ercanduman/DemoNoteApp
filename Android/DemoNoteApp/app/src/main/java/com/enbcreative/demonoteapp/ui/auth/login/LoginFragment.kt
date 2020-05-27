@@ -15,6 +15,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.enbcreative.demonoteapp.LOGGED_ID
 import com.enbcreative.demonoteapp.R
+import com.enbcreative.demonoteapp.USER_ID_INVALID
+import com.enbcreative.demonoteapp.data.prefs.Preferences
 import com.enbcreative.demonoteapp.databinding.FragmentLoginBinding
 import com.enbcreative.demonoteapp.ui.auth.AuthViewModel
 import com.enbcreative.demonoteapp.ui.auth.AuthViewModelFactory
@@ -29,6 +31,7 @@ import org.kodein.di.generic.instance
 class LoginFragment : Fragment(), KodeinAware, ProcessListener {
     override val kodein by closestKodein()
     private val factory by instance<AuthViewModelFactory>()
+    private val preferences by instance<Preferences>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,7 +56,7 @@ class LoginFragment : Fragment(), KodeinAware, ProcessListener {
             findNavController().navigate(R.id.action_LoginFragment_to_SignUpFragment)
         }
 
-        if (LOGGED_ID) startMainActivity()
+        if (LOGGED_ID || preferences.getUserID() != USER_ID_INVALID) startMainActivity()
         initViews()
     }
 

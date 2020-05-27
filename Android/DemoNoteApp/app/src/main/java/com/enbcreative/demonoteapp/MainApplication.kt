@@ -22,7 +22,7 @@ class MainApplication : MultiDexApplication(), KodeinAware {
         bind() from singleton { WebApi() }
         bind() from singleton { Preferences(instance()) }
         bind() from singleton { AppDatabase(instance()) }
-        bind() from singleton { UserRepository(instance(), instance()) }
+        bind() from singleton { UserRepository(instance(), instance(), instance()) }
         bind() from singleton { NoteRepository(instance(), instance(), instance()) }
         bind() from provider { AuthViewModelFactory(instance()) }
         bind() from provider { NotesViewModelFactory(instance()) }

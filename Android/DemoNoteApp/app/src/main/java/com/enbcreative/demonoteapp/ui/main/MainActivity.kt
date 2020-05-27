@@ -33,6 +33,7 @@ import java.util.*
 class MainActivity : AppCompatActivity(), KodeinAware {
     override val kodein by closestKodein()
     private val factory by instance<NotesViewModelFactory>()
+
     private lateinit var viewModel: NotesViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,10 +49,10 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             viewModel.notes.await().observe(this, Observer { handleData(it) })
         } catch (e: ApiException) {
             showContent(false, e.message)
-            // e.printStackTrace()
+            e.printStackTrace()
         } catch (e: Exception) {
             showContent(false, e.message)
-            // e.printStackTrace()
+            e.printStackTrace()
         }
     }
 
@@ -66,25 +67,6 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         notesAdapter.submitItems(notes)
         notesAdapter.listener = { _, note, _ -> upsertNote(note) }
         swipeToDelete()
-    }
-
-    private fun swipeToDelete() {
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return false
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
-                val note = notesAdapter.getCurrentItem(position)
-                viewModel.delete(note)
-                toast("Note deleted.")
-            }
-        }).attachToRecyclerView(recycler_view_notes)
     }
 
     private fun showContent(dataExist: Boolean, message: String?) {
@@ -140,6 +122,25 @@ class MainActivity : AppCompatActivity(), KodeinAware {
                 }
             }
         builder.create().show()
+    }
+
+    private fun swipeToDelete() {
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val note = notesAdapter.getCurrentItem(position)
+                viewModel.delete(note)
+                toast("Note deleted.")
+            }
+        }).attachToRecyclerView(recycler_view_notes)
     }
 
     private fun getCurrentDate() = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(Date())

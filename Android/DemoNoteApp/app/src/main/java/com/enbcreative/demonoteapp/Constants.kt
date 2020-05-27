@@ -3,6 +3,7 @@ package com.enbcreative.demonoteapp
 const val TEST_MODE = false
 const val LOGGED_ID = false
 const val APP_DB_VERSION = 1
+const val USER_ID_INVALID = -1
 
 const val DATE_FORMAT = "dd/MM/yyyy HH:mm"
 
