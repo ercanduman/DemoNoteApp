@@ -8,6 +8,7 @@ import com.enbcreative.demonoteapp.data.db.model.note.Note
 import com.enbcreative.demonoteapp.data.network.SafeApiRequest
 import com.enbcreative.demonoteapp.data.network.WebApi
 import com.enbcreative.demonoteapp.data.prefs.Preferences
+import com.enbcreative.demonoteapp.utils.ApiException
 import com.enbcreative.demonoteapp.utils.Coroutines
 import com.enbcreative.demonoteapp.utils.isFetchNeeded
 import com.enbcreative.demonoteapp.utils.logd
@@ -42,7 +43,8 @@ class NoteRepository(
             logd("Fetching note list for userId: $userId")
             val response = apiRequest { api.getNotes(userId) }
             logd("Api response message: ${response.message}")
-            noteList.postValue(response.notes)
+            if (response.error.not()) noteList.postValue(response.notes)
+            else throw ApiException(response.message)
         }
     }
 
