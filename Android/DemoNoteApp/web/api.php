@@ -134,9 +134,32 @@
                 $response['message'] = 'Required parameter userId is missing.';
             }
            break;
+
+		case 'insertnote':
+		    if(parametersAvailable(array('userId', 'content', 'created_at'))) {
+		        $userId = $_POST['userId'];
+		        $content = $_POST['content'];
+		        $created_at = $_POST['created_at'];
+		        $statement = $connection -> prepare("INSERT INTO notes (userId, content, created_at) VALUES (?, ?, ?)");
+		        $statement -> bind_param("sss", $userId, $content, $created_at);
+
+		         if($statement -> execute()) {
+                    $response['error'] = false;
+                    $response['message'] = 'New note created  successfully.';
+                 } else {
+                    $response['error'] = true;
+                    $response['message'] = 'Cannot create new note in web database. Error: '. $statement->error;
+                 }
+                 $statement -> close();
+            } else {
+                $response['error'] = true;
+                $response['message'] = 'Required parameter(s) missing. Please make sure that userId, note content and note created_at parameters available.';
+            }
+           break;
+
         default:
             $response['error'] = true;
-            $response['message'] = 'Invalid execution... API should be called for login or signup operations.';
+            $response['message'] = 'Invalid execution... API should be called for login, signup or notes operations.';
     }
 
   } else {
