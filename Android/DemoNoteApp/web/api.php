@@ -1,128 +1,201 @@
-<?php 
-        //getting the database connection
-	
-$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "firstdb";
+<?php
 
-// mysqli_connect("$servername", "$username", "$password", "$database");
-$conn = mysqli_connect($servername, $username, $password, $database);
+  // Getting database connection
+  $server_name = "localhost";
+  $username = "root";
+  $password = "";
+  $database = "firstdb";
 
-//if there is some error connecting to the database
-//with die we will stop the further execution by displaying a message causing the error 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+  $connection = mysqli_connect($server_name, $username, $password, $database);
 
-	$response = array();
-	
-	if(isset($_GET['apicall'])){
-		
-		switch($_GET['apicall']){
-			
-			case 'signup':
-				if(isTheseParametersAvailable(array('username','email','password','gender'))){
-					$username = $_POST['username']; 
-					$email = $_POST['email']; 
-					$password = md5($_POST['password']);
-					$gender = $_POST['gender']; 
-					
-					$stmt = $conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-					$stmt->bind_param("ss", $username, $email);
-					$stmt->execute();
-					$stmt->store_result();
-					
-					if($stmt->num_rows > 0){
-						$response['error'] = true;
-						$response['message'] = 'User already registered';
-						$stmt->close();
-					}else{
-						$stmt = $conn->prepare("INSERT INTO users (username, email, password, gender) VALUES (?, ?, ?, ?)");
-						$stmt->bind_param("ssss", $username, $email, $password, $gender);
+  // If there is any error while connecting to the database,
+  // then stop the further execution and display error message
+  if($connection -> connect_error) die("Connection failed: ".$connection->connect_error);
 
-						if($stmt->execute()){
-							$stmt = $conn->prepare("SELECT id, id, username, email, gender FROM users WHERE username = ?"); 
-							$stmt->bind_param("s",$username);
-							$stmt->execute();
-							$stmt->bind_result($userid, $id, $username, $email, $gender);
-							$stmt->fetch();
-							
-							$user = array(
-								'id'=>$id, 
-								'username'=>$username, 
-								'email'=>$email,
-								'gender'=>$gender
-							);
-							
-							$stmt->close();
-							
-							$response['error'] = false; 
-							$response['message'] = 'User registered successfully'; 
-							$response['user'] = $user; 
-						}
-					}
-					
-				}else{
-					$response['error'] = true; 
-					$response['message'] = 'required parameters are not available'; 
-				}
-				
-			break; 
-			
-			case 'login':
-				
-				if(isTheseParametersAvailable(array('email', 'password'))){
-					
-					$email = $_POST['email'];
-					$password = md5($_POST['password']); 
-					
-					$stmt = $conn->prepare("SELECT id, username, email, gender FROM users WHERE email = ? AND password = ?");
-					$stmt->bind_param("ss",$email, $password);
-					
-					$stmt->execute();
-					
-					$stmt->store_result();
-					
-					if($stmt->num_rows > 0){
-						$stmt->bind_result($id, $username, $email, $gender);
-						$stmt->fetch();
-						
-						$user = array(
-							'id'=>$id, 
-							'username'=>$username, 
-							'email'=>$email,
-							'gender'=>$gender
-						);
-						
-						$response['error'] = false; 
-						$response['message'] = 'Login successfull'; 
-						$response['user'] = $user; 
-					}else{
-						$response['error'] = false; 
-						$response['message'] = 'Invalid email or password';
-					}
-				}
-			break; 
-			
-			default: 
-				$response['error'] = true; 
-				$response['message'] = 'Invalid Operation Called';
-		}
-		
-	}else{
-		$response['error'] = true; 
-		$response['message'] = 'Invalid API Call';
-	}
-	
-	echo json_encode($response);
-	
-	function isTheseParametersAvailable($params){
-		
-		foreach($params as $param){
-			if(!isset($_POST[$param])){
-				return false; 
-			}
-		}
-		return true; 
-	}
+  $response = array();
+
+  if (isset($_GET['enbapicall'])){
+    switch ($_GET['enbapicall']) {
+        case 'login':
+            if(parametersAvailable(array('email','password'))) {
+                $email = $_POST['email'];
+                $password = md5($_POST['password']);
+
+                // Database query
+                $statement = $connection -> prepare("SELECT id, username, email, created_at, updated_at, gender FROM users WHERE email = ? and password = ?");
+                $statement -> bind_param("ss", $email, $password);
+                $statement -> execute();
+                $statement -> store_result();
+
+                if($statement -> num_rows > 0) {
+                    $statement -> bind_result($id, $username, $email, $created_at, $updated_at, $gender);
+                    $statement -> fetch();
+
+                    $user = array(
+                        'id' => $id,
+                        'username' => $username,
+                        'email' => $email,
+                        'created_at' => $created_at,
+                        'updated_at' => $updated_at,
+                        'gender' => $gender);
+
+                    $response['error'] = false;
+                    $response['message'] = 'Login successful.';
+                    $response['user'] = $user;
+                    $statement -> close();
+                } else {
+                    $response['error'] = true;
+                    $response['message'] = 'Invalid email or password.';
+                }
+
+            } else {
+                $response['error'] = true;
+                $response['message'] = 'Required parameters email or password missing.';
+            }
+           break;
+
+        case 'signup':
+            if(parametersAvailable(array('email','password', 'username'))) {
+                $email = $_POST['email'];
+
+                $statement = $connection -> prepare("SELECT * FROM users WHERE email = ?");
+                $statement->bind_param("s", $email);
+
+                $statement -> execute();
+                $statement -> store_result();
+                if($statement -> num_rows > 0) {
+                    $response['error'] = true;
+                    $response['message'] = 'Email already registered. Please try login to continue.';
+                } else {
+                    $username = $_POST['username'];
+                    $password = md5($_POST['password']);
+                    $statement = $connection -> prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+                    $statement -> bind_param("sss", $username, $email, $password);
+
+                    if($statement -> execute()) {
+                        $statement = $connection -> prepare("SELECT id, username, email, created_at, updated_at, gender FROM users WHERE email = ?");
+                        $statement -> bind_param("s", $email);
+                        $statement -> execute();
+                        $statement -> bind_result($id, $username, $email, $created_at, $updated_at, $gender);
+                        $statement -> fetch();
+
+                        $user = array(
+                            'id' => $id,
+                            'username' => $username,
+                            'email' => $email,
+                            'created_at' => $created_at,
+                            'updated_at' => $updated_at,
+                            'gender' => $gender);
+
+                        $response['error'] = false;
+                        $response['message'] = 'User registered successfully.';
+                        $response['user'] = $user;
+                    }
+                    $statement -> close();
+                }
+             } else {
+                $response['error'] = true;
+                $response['message'] = 'Required parameters missing. Please make sure that username, email and password available for signup execution.';
+             }
+           break;
+        case 'notes':
+            if(parametersAvailable(array('userId'))) {
+                $userId = $_POST['userId'];
+
+                // Database query
+                $statement = $connection -> prepare("SELECT id, userId, content, created_at, updated_at FROM notes WHERE userId = ?");
+                $statement -> bind_param("s", $userId);
+                $statement -> execute();
+                $statement -> store_result();
+
+                if($statement -> num_rows > 0) {
+                    $statement -> bind_result($id, $userId, $content, $created_at, $updated_at);
+                    $notes = array();
+                    while($statement -> fetch()) {
+                        $note = array(
+                            'id' => $id,
+                            'userId' => $userId,
+                            'content' => $content,
+                            'created_at' => $created_at,
+                            'updated_at' => $updated_at);
+                        // push single note into final response array
+                        array_push($notes, $note);
+                     }
+
+                    $response['error'] = false;
+                    $response['message'] = 'Execution successful.';
+                    $response['notes'] = $notes;
+                    $statement -> close();
+                } else {
+                    $response['error'] = true;
+                    $response['message'] = 'User has no any notes yet.';
+                }
+            } else {
+                $response['error'] = true;
+                $response['message'] = 'Required parameter userId is missing.';
+            }
+           break;
+
+		case 'insertnote':
+		    if(parametersAvailable(array('userId', 'content', 'created_at'))) {
+		        $userId = $_POST['userId'];
+		        $content = $_POST['content'];
+		        $created_at = $_POST['created_at'];
+		        $statement = $connection -> prepare("INSERT INTO notes (userId, content, created_at) VALUES (?, ?, ?)");
+		        $statement -> bind_param("sss", $userId, $content, $created_at);
+
+		         if($statement -> execute()) {
+                    $response['error'] = false;
+                    $response['message'] = 'New note created in web db successfully.';
+                 } else {
+                    $response['error'] = true;
+                    $response['message'] = 'Cannot create new note in web database. Error: '. $statement->error;
+                 }
+                 $statement -> close();
+            } else {
+                $response['error'] = true;
+                $response['message'] = 'Required parameter(s) missing. Please make sure that userId, note content and note created_at parameters available.';
+            }
+           break;
+		case 'updatenote':
+		    if(parametersAvailable(array('id', 'userId', 'content', 'updated_at'))) {
+		        $id = $_POST['id'];
+		        $userId = $_POST['userId'];
+		        $content = $_POST['content'];
+		        $updated_at = $_POST['updated_at'];
+		        $statement = $connection -> prepare("UPDATE notes SET content = ?, updated_at = ? WHERE id = ? and userId = ?");
+		        $statement -> bind_param("ssss", $content, $updated_at, $id, $userId);
+
+		         if($statement -> execute()) {
+                    $response['error'] = false;
+                    $response['message'] = 'Note updated in web db successfully.';
+                 } else {
+                    $response['error'] = true;
+                    $response['message'] = 'Cannot update note in web database. Error: '. $statement->error;
+                 }
+                 $statement -> close();
+            } else {
+                $response['error'] = true;
+                $response['message'] = 'Required parameter(s) missing. Please make sure that userId, note content and note created_at parameters available.';
+            }
+           break;
+
+        default:
+            $response['error'] = true;
+            $response['message'] = 'Invalid execution... API should be called for login, signup or notes operations.';
+    }
+
+  } else {
+       $response['error'] = true;
+       $response['message'] = 'Invalid API call';
+  }
+
+  header('Content-Type:Application/json');
+  echo json_encode($response);
+
+  function parametersAvailable($params) {
+    foreach($params as $param) { if(!isset($_POST[$param])) return false; }
+    return true;
+  }
+
+?>

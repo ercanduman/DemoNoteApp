@@ -1,6 +1,7 @@
 package com.enbcreative.demonoteapp
 
 const val TEST_MODE = false
+const val DATA_FROM_ROOM = false
 const val LOGGED_ID = false
 const val APP_DB_VERSION = 1
 const val USER_ID_INVALID = -1
@@ -13,4 +14,4 @@ const val DUMMY_USER_NAME = "Test User"
 const val DUMMY_USER_MAIL = "mail@mail.com"
 const val DUMMY_USER_PASSWORD = "123456"
 
-const val FETCH_INTERVAL = 15 // 15 minutes
+const val FETCH_INTERVAL = 0 // 15 minutes

@@ -50,4 +50,5 @@
     <string name="sign_out">Sign out</string>
     <string name="ok">OK</string>
     <string name="title_dialog_sign_out">Are your sure you want to sign out?</string>
+    <string name="synchronize_data">Synchronize data</string>
 </resources>

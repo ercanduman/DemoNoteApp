@@ -5,9 +5,11 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Note(
+    @PrimaryKey(autoGenerate = false)
+    val id: Int,
+    val userId: Int,
     var content: String,
-    var date: String,
-    val userId: Int? = 0,
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0
+    var created_at: String,
+    var updated_at: String,
+    var published: Boolean? = true
 )

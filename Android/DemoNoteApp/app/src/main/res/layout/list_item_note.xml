@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{note.date}"
+                android:text="@{note.created_at}"
                 android:textColor="#988E8E"
                 android:textSize="14sp"
                 tools:text="@string/note_dummy_date" />

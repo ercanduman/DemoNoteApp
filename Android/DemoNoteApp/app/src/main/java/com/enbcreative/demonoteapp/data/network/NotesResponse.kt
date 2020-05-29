@@ -5,14 +5,14 @@ import org.intellij.lang.annotations.Language
 
 @Language("JSON")
 private const val JSON_RESPONSE_SUCCESS =
-    "{\n  \"isSuccessful\": true,\n  \"message\": \"Execution Successful\",\n  \"notes\": [\n    {\n      \"id\": 1,\n      \"content\": \"This is a sample note from web api - 1\",\n      \"date\": \"2020.05.26 10:23:30\",\n      \"userId\": 1\n    },\n    {\n      \"id\": 2,\n      \"content\": \"This is a sample note from web api - 2\",\n      \"date\": \"2020.05.26 10:23:30\",\n      \"userId\": 1\n    }\n  ]\n}"
+    "{\n  \"error\": false,\n  \"message\": \"Execution successful.\",\n  \"notes\": [\n    {\n      \"id\": 1,\n      \"userId\": 1,\n      \"content\": \"Test note for user id 1\",\n      \"created_at\": \"2020-05-29 15:08:34\",\n      \"updated_at\": \"2020-05-29 00:00:00\"\n    },\n    {\n      \"id\": 2,\n      \"userId\": 1,\n      \"content\": \"Test note content for user id 1\",\n      \"created_at\": \"2020-05-29 15:08:34\",\n      \"updated_at\": \"2020-05-29 00:00:00\"\n    }\n  ]\n}"
 
 @Language("JSON")
 private const val JSON_RESPONSE_FAILED =
-    "{\n  \"isSuccessful\": false,\n  \"message\": \"Execution Failed. User do not have any notes!\"\n}"
+    "{\n  \"error\": true,\n  \"message\": \"User has no any notes yet.\"\n}"
 
 data class NotesResponse(
-    val isSuccessful: Boolean,
+    val error: Boolean,
     val message: String,
     val notes: List<Note>?
 )

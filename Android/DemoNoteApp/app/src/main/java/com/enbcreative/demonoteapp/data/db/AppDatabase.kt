@@ -7,10 +7,15 @@ import androidx.room.RoomDatabase
 import com.enbcreative.demonoteapp.APP_DB_VERSION
 import com.enbcreative.demonoteapp.data.db.model.note.Note
 import com.enbcreative.demonoteapp.data.db.model.note.NoteDao
+import com.enbcreative.demonoteapp.data.db.model.scheduled.ScheduledNote
 import com.enbcreative.demonoteapp.data.db.model.user.User
 import com.enbcreative.demonoteapp.data.db.model.user.UserDao
 
-@Database(entities = [User::class, Note::class], version = APP_DB_VERSION, exportSchema = false)
+@Database(
+    entities = [User::class, Note::class, ScheduledNote::class],
+    version = APP_DB_VERSION,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getUserDao(): UserDao
     abstract fun getNoteDao(): NoteDao
