@@ -14,5 +14,6 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
 
     init {
         repository.publishNotes()
+        repository.synchronizeNotes()
     }
 }

@@ -31,10 +31,19 @@ interface WebApi {
 
     @FormUrlEncoded
     @POST("api.php?enbapicall=insertnote")
-    suspend fun insertNote(
+    suspend fun insertNewNote(
         @Field("userId") userId: Int,
         @Field("content") content: String,
         @Field("created_at") created_at: String
+    ): Response<NotesResponse>
+
+    @FormUrlEncoded
+    @POST("api.php?enbapicall=updatenote")
+    suspend fun updateNote(
+        @Field("id") id: Int,
+        @Field("userId") userId: Int,
+        @Field("content") content: String,
+        @Field("updated_at") updated_at: String
     ): Response<NotesResponse>
 
     companion object {

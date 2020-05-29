@@ -103,20 +103,21 @@
                 $userId = $_POST['userId'];
 
                 // Database query
-                $statement = $connection -> prepare("SELECT id, userId, content, created_at FROM notes WHERE userId = ?");
+                $statement = $connection -> prepare("SELECT id, userId, content, created_at, updated_at FROM notes WHERE userId = ?");
                 $statement -> bind_param("s", $userId);
                 $statement -> execute();
                 $statement -> store_result();
 
                 if($statement -> num_rows > 0) {
-                    $statement -> bind_result($id, $userId, $content, $created_at);
+                    $statement -> bind_result($id, $userId, $content, $created_at, $updated_at);
                     $notes = array();
                     while($statement -> fetch()) {
                         $note = array(
                             'id' => $id,
                             'userId' => $userId,
                             'content' => $content,
-                            'created_at' => $created_at);
+                            'created_at' => $created_at,
+                            'updated_at' => $updated_at);
                         // push single note into final response array
                         array_push($notes, $note);
                      }
@@ -149,6 +150,28 @@
                  } else {
                     $response['error'] = true;
                     $response['message'] = 'Cannot create new note in web database. Error: '. $statement->error;
+                 }
+                 $statement -> close();
+            } else {
+                $response['error'] = true;
+                $response['message'] = 'Required parameter(s) missing. Please make sure that userId, note content and note created_at parameters available.';
+            }
+           break;
+		case 'updatenote':
+		    if(parametersAvailable(array('id', 'userId', 'content', 'updated_at'))) {
+		        $id = $_POST['id'];
+		        $userId = $_POST['userId'];
+		        $content = $_POST['content'];
+		        $updated_at = $_POST['updated_at'];
+		        $statement = $connection -> prepare("UPDATE notes SET content = ?, updated_at = ? WHERE id = ? and userId = ?");
+		        $statement -> bind_param("ssss", $content, $updated_at, $id, $userId);
+
+		         if($statement -> execute()) {
+                    $response['error'] = false;
+                    $response['message'] = 'Note updated in web db successfully.';
+                 } else {
+                    $response['error'] = true;
+                    $response['message'] = 'Cannot update note in web database. Error: '. $statement->error;
                  }
                  $statement -> close();
             } else {

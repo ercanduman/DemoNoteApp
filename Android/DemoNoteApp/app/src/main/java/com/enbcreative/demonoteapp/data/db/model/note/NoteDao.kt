@@ -21,6 +21,9 @@ interface NoteDao {
     @Query("SELECT * FROM Note ORDER BY id DESC")
     fun getAllNotes(): LiveData<List<Note>>
 
+    @Query("SELECT * FROM Note WHERE published = 0")
+    fun getUnPublishedNotes(): List<Note>
+
     @Insert
     fun insert(scheduled: ScheduledNote)
 

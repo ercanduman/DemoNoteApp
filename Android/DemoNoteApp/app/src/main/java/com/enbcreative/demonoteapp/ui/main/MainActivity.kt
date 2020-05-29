@@ -135,7 +135,8 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             .setPositiveButton(getString(R.string.save)) { d, _ ->
                 if (currentNote != null) {
                     currentNote.content = content.text.toString()
-                    currentNote.created_at = getCurrentDate()
+                    currentNote.updated_at = getCurrentDate()
+                    currentNote.published = false
                     Coroutines.main { viewModel.update(currentNote) }
                         .invokeOnCompletion {
                             d.dismiss()

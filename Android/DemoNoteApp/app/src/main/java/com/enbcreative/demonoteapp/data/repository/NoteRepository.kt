@@ -27,7 +27,6 @@ class NoteRepository(
         noteList.observeForever { it?.let { notes -> saveNotes(notes) } }
     }
 
-    fun saveNote(note: Note) = Coroutines.io { db.getNoteDao().insert(note) }
     fun updateNote(note: Note) = Coroutines.io { db.getNoteDao().update(note) }
     fun deleteNote(note: Note) = Coroutines.io { db.getNoteDao().delete(note) }
     suspend fun getAllNotes(): LiveData<List<Note>> {
@@ -61,9 +60,27 @@ class NoteRepository(
         if (unpublishedNoteList.isNotEmpty()) {
             unpublishedNoteList.forEach { note ->
                 val response =
-                    apiRequest { api.insertNote(note.userId!!, note.content, note.created_at) }
+                    apiRequest { api.insertNewNote(note.userId!!, note.content, note.created_at) }
                 logd(response.message)
                 if (response.error.not()) db.getNoteDao().deleteScheduledNote(note)
+            }
+        } else logd("All notes are published...")
+    }
+
+    fun synchronizeNotes() = Coroutines.io {
+        val unpublishedNoteList = db.getNoteDao().getUnPublishedNotes()
+        logd("Un synchronized note size: ${unpublishedNoteList.size}")
+        if (unpublishedNoteList.isNotEmpty()) {
+            unpublishedNoteList.forEach { note ->
+                val response =
+                    apiRequest {
+                        api.updateNote(note.id, note.userId, note.content, note.created_at)
+                    }
+                logd(response.message)
+                if (response.error.not()) {
+                    note.published = true
+                    db.getNoteDao().update(note)
+                }
             }
         } else logd("All notes are synchronized...")
     }

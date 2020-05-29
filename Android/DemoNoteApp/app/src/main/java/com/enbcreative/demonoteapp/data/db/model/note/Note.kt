@@ -9,5 +9,7 @@ data class Note(
     val id: Int,
     val userId: Int,
     var content: String,
-    var created_at: String
+    var created_at: String,
+    var updated_at: String,
+    var published: Boolean? = true
 )
