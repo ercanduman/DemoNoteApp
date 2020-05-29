@@ -98,6 +98,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.sign_out_main -> showSignOutDialog()
+            R.id.synchronize_main -> viewModel.synchronizeData()
         }
         return super.onOptionsItemSelected(item)
     }

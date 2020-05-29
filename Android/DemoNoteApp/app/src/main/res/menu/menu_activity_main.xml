@@ -3,4 +3,7 @@
     <item
         android:id="@+id/sign_out_main"
         android:title="@string/sign_out" />
+    <item
+        android:id="@+id/synchronize_main"
+        android:title="@string/synchronize_data" />
 </menu>

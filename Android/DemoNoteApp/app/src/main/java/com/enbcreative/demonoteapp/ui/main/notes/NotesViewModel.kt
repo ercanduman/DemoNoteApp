@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.enbcreative.demonoteapp.data.db.model.note.Note
 import com.enbcreative.demonoteapp.data.db.model.scheduled.ScheduledNote
 import com.enbcreative.demonoteapp.data.repository.NoteRepository
+import com.enbcreative.demonoteapp.utils.Coroutines
 import com.enbcreative.demonoteapp.utils.lazyDeferred
 
 class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
@@ -15,5 +16,11 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
     init {
         repository.publishNotes()
         repository.synchronizeNotes()
+    }
+
+    fun synchronizeData() {
+        repository.publishNotes()
+        repository.synchronizeNotes()
+        Coroutines.io { repository.getAllNotes() }
     }
 }
