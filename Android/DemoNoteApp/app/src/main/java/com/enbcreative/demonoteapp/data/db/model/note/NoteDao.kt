@@ -20,6 +20,15 @@ interface NoteDao {
     @Query("SELECT * FROM Note ORDER BY id DESC")
     fun getAllNotes(): LiveData<List<Note>>
 
+    @Insert
+    fun insert(scheduled: ScheduledNote)
+
+    @Query("SELECT * FROM ScheduledNote")
+    fun getScheduledNotes(): List<ScheduledNote>
+
+    @Delete
+    fun deleteScheduledNote(scheduled: ScheduledNote)
+
     @Query("SELECT COUNT(*) FROM Note")
     fun getNoteCount(): Int
 }

@@ -145,7 +145,7 @@
 
 		         if($statement -> execute()) {
                     $response['error'] = false;
-                    $response['message'] = 'New note created  successfully.';
+                    $response['message'] = 'New note created in web db successfully.';
                  } else {
                     $response['error'] = true;
                     $response['message'] = 'Cannot create new note in web database. Error: '. $statement->error;

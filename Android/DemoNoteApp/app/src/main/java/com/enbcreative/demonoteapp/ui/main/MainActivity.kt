@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.enbcreative.demonoteapp.DATE_FORMAT
 import com.enbcreative.demonoteapp.R
 import com.enbcreative.demonoteapp.data.db.model.note.Note
+import com.enbcreative.demonoteapp.data.db.model.scheduled.ScheduledNote
 import com.enbcreative.demonoteapp.data.prefs.Preferences
 import com.enbcreative.demonoteapp.ui.main.notes.NotesAdapter
 import com.enbcreative.demonoteapp.ui.main.notes.NotesViewModel
@@ -114,38 +115,39 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             }.create().show()
     }
 
-    private fun upsertNote(note: Note?) {
+    private fun upsertNote(currentNote: Note?) {
         val inflater = LayoutInflater.from(this)
 
         @SuppressLint("InflateParams")
         val dialog: View = inflater.inflate(R.layout.dialog_add_note, null)
 
         val title: TextView = dialog.dialog_note_title
-        val currentNote: Note?
         title.text =
-            if (note != null) getString(R.string.edit_note) else getString(R.string.new_note)
+            if (currentNote != null) getString(R.string.edit_note) else getString(R.string.new_note)
 
         val content: EditText = dialog.dialog_note_content
-        if (note != null) {
-            currentNote = note
-            content.setText(note.content)
-        } else currentNote = Note(content = "", created_at = "")
+        if (currentNote != null) content.setText(currentNote.content)
 
         val builder = AlertDialog.Builder(this)
             .setView(dialog)
             .setCancelable(false)
             .setNegativeButton(getString(R.string.cancel), null)
             .setPositiveButton(getString(R.string.save)) { d, _ ->
-                currentNote.content = content.text.toString()
-                currentNote.created_at = getCurrentDate()
-                if (note != null) {
+                if (currentNote != null) {
+                    currentNote.content = content.text.toString()
+                    currentNote.created_at = getCurrentDate()
                     Coroutines.main { viewModel.update(currentNote) }
                         .invokeOnCompletion {
                             d.dismiss()
                             toast("Note Updated")
                         }
                 } else {
-                    Coroutines.main { viewModel.save(currentNote) }
+                    val scheduledNote = ScheduledNote(
+                        userId = preferences.getUserID(),
+                        content = content.text.toString(),
+                        created_at = getCurrentDate()
+                    )
+                    Coroutines.main { viewModel.saveScheduled(scheduledNote) }
                         .invokeOnCompletion {
                             d.dismiss()
                             toast("New Note Added")

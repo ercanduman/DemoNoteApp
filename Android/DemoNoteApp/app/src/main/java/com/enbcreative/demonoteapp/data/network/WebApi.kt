@@ -29,6 +29,14 @@ interface WebApi {
     @POST("api.php?enbapicall=notes")
     suspend fun getNotes(@Field("userId") userId: Int): Response<NotesResponse>
 
+    @FormUrlEncoded
+    @POST("api.php?enbapicall=insertnote")
+    suspend fun insertNote(
+        @Field("userId") userId: Int,
+        @Field("content") content: String,
+        @Field("created_at") created_at: String
+    ): Response<NotesResponse>
+
     companion object {
         operator fun invoke(): WebApi {
             return Retrofit.Builder()

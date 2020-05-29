@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.enbcreative.demonoteapp.DATA_FROM_ROOM
 import com.enbcreative.demonoteapp.data.db.AppDatabase
 import com.enbcreative.demonoteapp.data.db.model.note.Note
+import com.enbcreative.demonoteapp.data.db.model.scheduled.ScheduledNote
 import com.enbcreative.demonoteapp.data.network.SafeApiRequest
 import com.enbcreative.demonoteapp.data.network.WebApi
 import com.enbcreative.demonoteapp.data.prefs.Preferences
@@ -51,5 +52,19 @@ class NoteRepository(
     private fun saveNotes(notes: List<Note>) = Coroutines.io {
         preferences.saveLastTime(System.currentTimeMillis().toString())
         db.getNoteDao().saveAllNotes(notes)
+    }
+
+    fun saveScheduled(note: ScheduledNote) = Coroutines.io { db.getNoteDao().insert(note) }
+    fun publishNotes() = Coroutines.io {
+        val unpublishedNoteList = db.getNoteDao().getScheduledNotes()
+        logd("Un published note size: ${unpublishedNoteList.size}")
+        if (unpublishedNoteList.isNotEmpty()) {
+            unpublishedNoteList.forEach { note ->
+                val response =
+                    apiRequest { api.insertNote(note.userId!!, note.content, note.created_at) }
+                logd(response.message)
+                if (response.error.not()) db.getNoteDao().deleteScheduledNote(note)
+            }
+        } else logd("All notes are synchronized...")
     }
 }
