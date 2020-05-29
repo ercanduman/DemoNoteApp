@@ -2,6 +2,7 @@ package com.enbcreative.demonoteapp.data.db.model.note
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.enbcreative.demonoteapp.data.db.model.scheduled.ScheduledNote
 
 @Dao
 interface NoteDao {
