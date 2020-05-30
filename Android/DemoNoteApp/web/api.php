@@ -6,8 +6,7 @@
   $password = "";
   $database = "firstdb";
 
-  $connection = mysqli_connect($server_name, $username, $password, $database);
-
+  $connection = mysqli_connect($server_name, $username, $password, $database) or die("Connection could not established!");
   // If there is any error while connecting to the database,
   // then stop the further execution and display error message
   if($connection -> connect_error) die("Connection failed: ".$connection->connect_error);

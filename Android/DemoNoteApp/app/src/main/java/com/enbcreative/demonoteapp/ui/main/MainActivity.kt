@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.enbcreative.demonoteapp.DATE_FORMAT
 import com.enbcreative.demonoteapp.R
 import com.enbcreative.demonoteapp.data.db.model.note.Note
@@ -24,10 +25,7 @@ import com.enbcreative.demonoteapp.ui.main.notes.NotesAdapter
 import com.enbcreative.demonoteapp.ui.main.notes.NotesViewModel
 import com.enbcreative.demonoteapp.ui.main.notes.NotesViewModelFactory
 import com.enbcreative.demonoteapp.ui.splash.SplashActivity
-import com.enbcreative.demonoteapp.utils.ApiException
-import com.enbcreative.demonoteapp.utils.Coroutines
-import com.enbcreative.demonoteapp.utils.logd
-import com.enbcreative.demonoteapp.utils.toast
+import com.enbcreative.demonoteapp.utils.*
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
@@ -39,7 +37,7 @@ import org.kodein.di.generic.instance
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainActivity : AppCompatActivity(), KodeinAware {
+class MainActivity : AppCompatActivity(), KodeinAware, SwipeRefreshLayout.OnRefreshListener {
     override val kodein by closestKodein()
     private val factory by instance<NotesViewModelFactory>()
     private val preferences by instance<Preferences>()
@@ -50,10 +48,12 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         fab_main_activity.setOnClickListener { upsertNote(null) }
+        swipe_to_refresh_layout_main.setOnRefreshListener(this)
         bindData()
     }
 
     private fun bindData() = Coroutines.main {
+        progress_bar_loading_main.show()
         try {
             viewModel = ViewModelProvider(this, factory).get(NotesViewModel::class.java)
             viewModel.synchronizeData()
@@ -81,6 +81,8 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun showContent(dataExist: Boolean, message: String?) {
+        progress_bar_loading_main.hide()
+        swipe_to_refresh_layout_main.isRefreshing = false
         if (dataExist) {
             recycler_view_notes.visibility = View.VISIBLE
             no_data_found_main.visibility = View.GONE
@@ -209,4 +211,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun getCurrentDate() = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(Date())
+    override fun onRefresh() {
+        bindData()
+    }
 }
