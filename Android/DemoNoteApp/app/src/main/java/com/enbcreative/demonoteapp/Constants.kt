@@ -10,7 +10,7 @@ const val USER_ID_INVALID = -1
 const val DATE_FORMAT = "yyyy-MM-dd HH:mm:ss"
 
 // http://localhost/android_demo/api.php?apicall=login
-const val BASE_API_URL = "http://192.168.1.5/android_demo/"
+const val BASE_API_URL = "http://10.0.2.2:80/android_demo/"
 const val DUMMY_USER_NAME = "Test User"
 const val DUMMY_USER_MAIL = "mail@mail.com"
 const val DUMMY_USER_PASSWORD = "123456"
