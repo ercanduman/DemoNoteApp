@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 29, 2020 at 01:11 PM
+-- Generation Time: May 30, 2020 at 02:30 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.2.31
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `firstdb`
 --
+CREATE DATABASE IF NOT EXISTS `firstdb` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `firstdb`;
 
 -- --------------------------------------------------------
 
@@ -31,16 +33,22 @@ CREATE TABLE `notes` (
   `id` int(11) NOT NULL,
   `userId` int(11) NOT NULL,
   `content` text NOT NULL,
-  `created_at` date NOT NULL DEFAULT current_timestamp()
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `notes`
 --
 
-INSERT INTO `notes` (`id`, `userId`, `content`, `created_at`) VALUES
-(2, 1, 'Test note for user id 1', '0000-00-00'),
-(3, 1, 'Test note for user id 1', '0000-00-00');
+INSERT INTO `notes` (`id`, `userId`, `content`, `updated_at`, `created_at`) VALUES
+(9, 1, 'New note from app to check synchronize btn', '2020-05-29 15:08:34', '2020-05-30 12:04:25'),
+(13, 2, 'NEw note added for user id 2', '2020-05-30 11:05:40', '2020-05-30 12:04:25'),
+(15, 2, 'Test note 3', '2020-05-30 12:03:07', '2020-05-30 12:04:25'),
+(16, 1, 'Note from web to android app', '2020-05-30 12:23:56', '2020-05-30 12:23:56'),
+(17, 1, 'Note from android to web', '2020-05-30 12:24:25', '0000-00-00 00:00:00'),
+(19, 2, 'New note for testing time', '2020-05-30 12:39:12', '2020-05-30 12:38:58'),
+(20, 1, 'New note 11', '2020-05-30 12:57:30', '2020-05-30 12:57:21');
 
 -- --------------------------------------------------------
 
@@ -92,7 +100,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `notes`
 --
 ALTER TABLE `notes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `users`
