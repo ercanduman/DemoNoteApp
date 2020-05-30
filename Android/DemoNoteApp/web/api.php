@@ -180,6 +180,27 @@
             }
            break;
 
+		case 'deletenote':
+		    if(parametersAvailable(array('id', 'userId'))) {
+		        $id = $_POST['id'];
+		        $userId = $_POST['userId'];
+		        $statement = $connection -> prepare("DELETE FROM notes WHERE id = ? and userId = ?");
+		        $statement -> bind_param("ss", $id, $userId);
+
+		         if($statement -> execute()) {
+                    $response['error'] = false;
+                    $response['message'] = 'Note deleted from web database successfully.';
+                 } else {
+                    $response['error'] = true;
+                    $response['message'] = 'Cannot delete note in web database. Error: '. $statement->error;
+                 }
+                 $statement -> close();
+            } else {
+                $response['error'] = true;
+                $response['message'] = 'Required parameter(s) missing. Please make sure that id and userId parameters available.';
+            }
+           break;
+
         default:
             $response['error'] = true;
             $response['message'] = 'Invalid execution... API should be called for login, signup or notes operations.';
