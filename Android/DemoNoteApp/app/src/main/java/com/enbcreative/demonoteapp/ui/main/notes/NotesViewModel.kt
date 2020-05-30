@@ -11,7 +11,7 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
     fun saveScheduled(scheduled: ScheduledNote) = repository.saveScheduled(scheduled)
     fun save(note: Note) = repository.saveNote(note)
     fun update(note: Note) = repository.updateNote(note)
-    fun delete(note: Note) = repository.deleteNote(note)
+    // fun delete(note: Note) = repository.deleteNote(note)
 
     init {
         repository.publishNotes()

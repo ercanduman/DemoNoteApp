@@ -142,6 +142,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
                     currentNote.content = content.text.toString()
                     currentNote.updated_at = getCurrentDate()
                     currentNote.published = false
+                    currentNote.crudOperation = Note.UPDATE
                     Coroutines.main { viewModel.update(currentNote) }
                         .invokeOnCompletion {
                             d.dismiss()
@@ -185,19 +186,21 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         }).attachToRecyclerView(recycler_view_notes)
     }
 
-    private fun deleteConfirmSnackbar(note: Note, position: Int) {
+    private fun deleteConfirmSnackbar(currentNote: Note, position: Int) {
         val message = getString(R.string.note_deleted)
         Snackbar.make(parent_content_main_activity, message, Snackbar.LENGTH_SHORT)
             .setAction(getString(R.string.undo)) {
                 // toast("Undo clicked")
-                notesAdapter.addItem(note)
+                notesAdapter.addItem(currentNote)
                 notesAdapter.notifyItemInserted(position)
             }
             .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
                 override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                     if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT) {
                         // toast("Snackbar closed on its own")
-                        viewModel.delete(note)
+                        currentNote.published = false
+                        currentNote.crudOperation = Note.DELETE
+                        viewModel.update(currentNote)
                     }
                 }
             }).show()

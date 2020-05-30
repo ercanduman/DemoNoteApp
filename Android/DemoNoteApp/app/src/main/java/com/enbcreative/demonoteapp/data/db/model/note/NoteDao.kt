@@ -18,7 +18,7 @@ interface NoteDao {
     @Delete
     fun delete(note: Note)
 
-    @Query("SELECT * FROM Note ORDER BY id DESC")
+    @Query("SELECT * FROM  Note WHERE published = 1 ORDER BY id DESC")
     fun getAllNotes(): LiveData<List<Note>>
 
     @Query("SELECT * FROM Note WHERE published = 0")
