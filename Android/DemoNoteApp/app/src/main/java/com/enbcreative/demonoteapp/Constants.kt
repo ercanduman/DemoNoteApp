@@ -6,7 +6,8 @@ const val LOGGED_ID = false
 const val APP_DB_VERSION = 1
 const val USER_ID_INVALID = -1
 
-const val DATE_FORMAT = "dd/MM/yyyy HH:mm"
+// 2020-05-30 12:04:25
+const val DATE_FORMAT = "yyyy-MM-dd HH:mm:ss"
 
 // http://localhost/android_demo/api.php?apicall=login
 const val BASE_API_URL = "http://192.168.1.5/android_demo/"

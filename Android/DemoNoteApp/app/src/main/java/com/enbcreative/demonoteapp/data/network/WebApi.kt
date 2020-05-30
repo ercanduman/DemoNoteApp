@@ -46,6 +46,13 @@ interface WebApi {
         @Field("updated_at") updated_at: String
     ): Response<NotesResponse>
 
+    @FormUrlEncoded
+    @POST("api.php?enbapicall=deletenote")
+    suspend fun deleteNote(
+        @Field("id") id: Int,
+        @Field("userId") userId: Int
+    ): Response<NotesResponse>
+
     companion object {
         operator fun invoke(): WebApi {
             return Retrofit.Builder()

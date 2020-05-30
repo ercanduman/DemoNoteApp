@@ -27,12 +27,13 @@ class NoteRepository(
         noteList.observeForever { it?.let { notes -> saveNotes(notes) } }
     }
 
+    fun saveNote(note: Note) = Coroutines.io { db.getNoteDao().insert(note) }
     fun updateNote(note: Note) = Coroutines.io { db.getNoteDao().update(note) }
-    fun deleteNote(note: Note) = Coroutines.io { db.getNoteDao().delete(note) }
+    // fun deleteNote(note: Note) = Coroutines.io { db.getNoteDao().delete(note) }
     suspend fun getAllNotes(): LiveData<List<Note>> {
         return withContext(Dispatchers.IO) {
             if (DATA_FROM_ROOM.not()) fetchNotes()
-            db.getNoteDao().getAllNotes()
+            db.getNoteDao().getAllNotes(preferences.getUserID())
         }
     }
 
@@ -43,8 +44,12 @@ class NoteRepository(
             logd("Fetching note list for userId: $userId")
             val response = apiRequest { api.getNotes(userId) }
             logd("Api response message: ${response.message}")
-            if (response.error.not()) noteList.postValue(response.notes)
-            else throw ApiException(response.message)
+            if (response.error.not()) {
+                val notes = response.notes!!
+                logd("Api response fetched note list size: ${notes.size}")
+                notes.forEach { it.published = true }
+                noteList.postValue(notes)
+            } else throw ApiException(response.message)
         }
     }
 
@@ -72,15 +77,20 @@ class NoteRepository(
         logd("Un synchronized note size: ${unpublishedNoteList.size}")
         if (unpublishedNoteList.isNotEmpty()) {
             unpublishedNoteList.forEach { note ->
-                val response =
-                    apiRequest {
+                if (note.crudOperation == Note.UPDATE) {
+                    val response = apiRequest {
                         api.updateNote(note.id, note.userId, note.content, note.created_at)
                     }
-                logd(response.message)
-                if (response.error.not()) {
-                    note.published = true
-                    db.getNoteDao().update(note)
-                }
+                    logd(response.message)
+                    if (response.error.not()) {
+                        note.published = true
+                        db.getNoteDao().update(note)
+                    }
+                } else if (note.crudOperation == Note.DELETE) {
+                    val response = apiRequest { api.deleteNote(note.id, note.userId) }
+                    logd(response.message)
+                    if (response.error.not()) db.getNoteDao().delete(note)
+                } else throw IllegalArgumentException("Invalid CRUD operation found as ${note.crudOperation}")
             }
         } else logd("All notes are synchronized...")
     }

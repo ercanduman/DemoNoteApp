@@ -11,5 +11,12 @@ data class Note(
     var content: String,
     var created_at: String,
     var updated_at: String,
-    var published: Boolean? = true
-)
+    var published: Boolean? = true,
+    var crudOperation: Int? = INSERT
+) {
+    companion object {
+        const val INSERT = 0
+        const val DELETE = 1
+        const val UPDATE = 2
+    }
+}

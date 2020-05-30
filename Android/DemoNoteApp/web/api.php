@@ -6,8 +6,7 @@
   $password = "";
   $database = "firstdb";
 
-  $connection = mysqli_connect($server_name, $username, $password, $database);
-
+  $connection = mysqli_connect($server_name, $username, $password, $database) or die("Connection could not established!");
   // If there is any error while connecting to the database,
   // then stop the further execution and display error message
   if($connection -> connect_error) die("Connection failed: ".$connection->connect_error);
@@ -177,6 +176,27 @@
             } else {
                 $response['error'] = true;
                 $response['message'] = 'Required parameter(s) missing. Please make sure that userId, note content and note created_at parameters available.';
+            }
+           break;
+
+		case 'deletenote':
+		    if(parametersAvailable(array('id', 'userId'))) {
+		        $id = $_POST['id'];
+		        $userId = $_POST['userId'];
+		        $statement = $connection -> prepare("DELETE FROM notes WHERE id = ? and userId = ?");
+		        $statement -> bind_param("ss", $id, $userId);
+
+		         if($statement -> execute()) {
+                    $response['error'] = false;
+                    $response['message'] = 'Note deleted from web database successfully.';
+                 } else {
+                    $response['error'] = true;
+                    $response['message'] = 'Cannot delete note in web database. Error: '. $statement->error;
+                 }
+                 $statement -> close();
+            } else {
+                $response['error'] = true;
+                $response['message'] = 'Required parameter(s) missing. Please make sure that id and userId parameters available.';
             }
            break;
 

@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.enbcreative.demonoteapp.DATE_FORMAT
 import com.enbcreative.demonoteapp.R
 import com.enbcreative.demonoteapp.data.db.model.note.Note
@@ -24,9 +25,9 @@ import com.enbcreative.demonoteapp.ui.main.notes.NotesAdapter
 import com.enbcreative.demonoteapp.ui.main.notes.NotesViewModel
 import com.enbcreative.demonoteapp.ui.main.notes.NotesViewModelFactory
 import com.enbcreative.demonoteapp.ui.splash.SplashActivity
-import com.enbcreative.demonoteapp.utils.ApiException
-import com.enbcreative.demonoteapp.utils.Coroutines
-import com.enbcreative.demonoteapp.utils.toast
+import com.enbcreative.demonoteapp.utils.*
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main_content.*
 import kotlinx.android.synthetic.main.dialog_add_note.view.*
@@ -36,7 +37,7 @@ import org.kodein.di.generic.instance
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainActivity : AppCompatActivity(), KodeinAware {
+class MainActivity : AppCompatActivity(), KodeinAware, SwipeRefreshLayout.OnRefreshListener {
     override val kodein by closestKodein()
     private val factory by instance<NotesViewModelFactory>()
     private val preferences by instance<Preferences>()
@@ -47,12 +48,15 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         fab_main_activity.setOnClickListener { upsertNote(null) }
+        swipe_to_refresh_layout_main.setOnRefreshListener(this)
         bindData()
     }
 
     private fun bindData() = Coroutines.main {
+        progress_bar_loading_main.show()
         try {
             viewModel = ViewModelProvider(this, factory).get(NotesViewModel::class.java)
+            viewModel.synchronizeData()
             viewModel.notes.await().observe(this, Observer { handleData(it) })
         } catch (e: ApiException) {
             showContent(false, e.message)
@@ -77,6 +81,8 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun showContent(dataExist: Boolean, message: String?) {
+        progress_bar_loading_main.hide()
+        swipe_to_refresh_layout_main.isRefreshing = false
         if (dataExist) {
             recycler_view_notes.visibility = View.VISIBLE
             no_data_found_main.visibility = View.GONE
@@ -98,7 +104,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.sign_out_main -> showSignOutDialog()
-            R.id.synchronize_main -> viewModel.synchronizeData()
+            R.id.synchronize_main -> bindData()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -129,6 +135,8 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         val content: EditText = dialog.dialog_note_content
         if (currentNote != null) content.setText(currentNote.content)
 
+        val changeTime = getCurrentDate()
+        logd("Change Time: $changeTime")
         val builder = AlertDialog.Builder(this)
             .setView(dialog)
             .setCancelable(false)
@@ -136,8 +144,9 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             .setPositiveButton(getString(R.string.save)) { d, _ ->
                 if (currentNote != null) {
                     currentNote.content = content.text.toString()
-                    currentNote.updated_at = getCurrentDate()
+                    currentNote.updated_at = changeTime
                     currentNote.published = false
+                    currentNote.crudOperation = Note.UPDATE
                     Coroutines.main { viewModel.update(currentNote) }
                         .invokeOnCompletion {
                             d.dismiss()
@@ -147,7 +156,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
                     val scheduledNote = ScheduledNote(
                         userId = preferences.getUserID(),
                         content = content.text.toString(),
-                        created_at = getCurrentDate()
+                        created_at = changeTime
                     )
                     Coroutines.main { viewModel.saveScheduled(scheduledNote) }
                         .invokeOnCompletion {
@@ -160,6 +169,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun swipeToDelete() {
+        logd("swipeToDelete() - called")
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -170,13 +180,38 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                logd("onSwiped() - called")
                 val position = viewHolder.adapterPosition
                 val note = notesAdapter.getCurrentItem(position)
-                viewModel.delete(note)
-                toast("Note deleted.")
+                notesAdapter.removeItem(note)
+                notesAdapter.notifyItemRemoved(position)
+                deleteConfirmSnackbar(note, position)
             }
         }).attachToRecyclerView(recycler_view_notes)
     }
 
+    private fun deleteConfirmSnackbar(currentNote: Note, position: Int) {
+        val message = getString(R.string.note_deleted)
+        Snackbar.make(parent_content_main_activity, message, Snackbar.LENGTH_SHORT)
+            .setAction(getString(R.string.undo)) {
+                // toast("Undo clicked")
+                notesAdapter.addItem(currentNote)
+                notesAdapter.notifyItemInserted(position)
+            }
+            .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                    if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT) {
+                        // toast("Snackbar closed on its own")
+                        currentNote.published = false
+                        currentNote.crudOperation = Note.DELETE
+                        viewModel.update(currentNote)
+                    }
+                }
+            }).show()
+    }
+
     private fun getCurrentDate() = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(Date())
+    override fun onRefresh() {
+        bindData()
+    }
 }
