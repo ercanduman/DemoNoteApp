@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     private fun bindData() = Coroutines.main {
         try {
             viewModel = ViewModelProvider(this, factory).get(NotesViewModel::class.java)
+            viewModel.synchronizeData()
             viewModel.notes.await().observe(this, Observer { handleData(it) })
         } catch (e: ApiException) {
             showContent(false, e.message)
@@ -98,7 +99,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.sign_out_main -> showSignOutDialog()
-            R.id.synchronize_main -> viewModel.synchronizeData()
+            R.id.synchronize_main -> bindData()
         }
         return super.onOptionsItemSelected(item)
     }
