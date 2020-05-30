@@ -33,7 +33,7 @@ class NoteRepository(
     suspend fun getAllNotes(): LiveData<List<Note>> {
         return withContext(Dispatchers.IO) {
             if (DATA_FROM_ROOM.not()) fetchNotes()
-            db.getNoteDao().getAllNotes()
+            db.getNoteDao().getAllNotes(preferences.getUserID())
         }
     }
 

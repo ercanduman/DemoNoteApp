@@ -18,8 +18,8 @@ interface NoteDao {
     @Delete
     fun delete(note: Note)
 
-    @Query("SELECT * FROM  Note WHERE published = 1 ORDER BY id DESC")
-    fun getAllNotes(): LiveData<List<Note>>
+    @Query("SELECT * FROM  Note WHERE userId =:userId AND  published = 1 ORDER BY id DESC")
+    fun getAllNotes(userId: Int): LiveData<List<Note>>
 
     @Query("SELECT * FROM Note WHERE published = 0")
     fun getUnPublishedNotes(): List<Note>

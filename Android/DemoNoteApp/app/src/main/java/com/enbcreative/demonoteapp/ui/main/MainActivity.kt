@@ -133,6 +133,8 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         val content: EditText = dialog.dialog_note_content
         if (currentNote != null) content.setText(currentNote.content)
 
+        val changeTime = getCurrentDate()
+        logd("Change Time: $changeTime")
         val builder = AlertDialog.Builder(this)
             .setView(dialog)
             .setCancelable(false)
@@ -140,7 +142,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             .setPositiveButton(getString(R.string.save)) { d, _ ->
                 if (currentNote != null) {
                     currentNote.content = content.text.toString()
-                    currentNote.updated_at = getCurrentDate()
+                    currentNote.updated_at = changeTime
                     currentNote.published = false
                     currentNote.crudOperation = Note.UPDATE
                     Coroutines.main { viewModel.update(currentNote) }
@@ -152,7 +154,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
                     val scheduledNote = ScheduledNote(
                         userId = preferences.getUserID(),
                         content = content.text.toString(),
-                        created_at = getCurrentDate()
+                        created_at = changeTime
                     )
                     Coroutines.main { viewModel.saveScheduled(scheduledNote) }
                         .invokeOnCompletion {
