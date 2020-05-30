@@ -27,6 +27,7 @@ class NoteRepository(
         noteList.observeForever { it?.let { notes -> saveNotes(notes) } }
     }
 
+    fun saveNote(note: Note) = Coroutines.io { db.getNoteDao().insert(note) }
     fun updateNote(note: Note) = Coroutines.io { db.getNoteDao().update(note) }
     fun deleteNote(note: Note) = Coroutines.io { db.getNoteDao().delete(note) }
     suspend fun getAllNotes(): LiveData<List<Note>> {

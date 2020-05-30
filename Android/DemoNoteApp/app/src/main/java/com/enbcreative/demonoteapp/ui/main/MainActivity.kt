@@ -26,7 +26,10 @@ import com.enbcreative.demonoteapp.ui.main.notes.NotesViewModelFactory
 import com.enbcreative.demonoteapp.ui.splash.SplashActivity
 import com.enbcreative.demonoteapp.utils.ApiException
 import com.enbcreative.demonoteapp.utils.Coroutines
+import com.enbcreative.demonoteapp.utils.logd
 import com.enbcreative.demonoteapp.utils.toast
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main_content.*
 import kotlinx.android.synthetic.main.dialog_add_note.view.*
@@ -161,6 +164,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     }
 
     private fun swipeToDelete() {
+        logd("swipeToDelete() - called")
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -171,12 +175,32 @@ class MainActivity : AppCompatActivity(), KodeinAware {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                logd("onSwiped() - called")
                 val position = viewHolder.adapterPosition
                 val note = notesAdapter.getCurrentItem(position)
-                viewModel.delete(note)
-                toast("Note deleted.")
+                notesAdapter.removeItem(note)
+                notesAdapter.notifyItemRemoved(position)
+                deleteConfirmSnackbar(note, position)
             }
         }).attachToRecyclerView(recycler_view_notes)
+    }
+
+    private fun deleteConfirmSnackbar(note: Note, position: Int) {
+        val message = getString(R.string.note_deleted)
+        Snackbar.make(parent_content_main_activity, message, Snackbar.LENGTH_SHORT)
+            .setAction(getString(R.string.undo)) {
+                // toast("Undo clicked")
+                notesAdapter.addItem(note)
+                notesAdapter.notifyItemInserted(position)
+            }
+            .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                    if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT) {
+                        // toast("Snackbar closed on its own")
+                        viewModel.delete(note)
+                    }
+                }
+            }).show()
     }
 
     private fun getCurrentDate() = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).format(Date())

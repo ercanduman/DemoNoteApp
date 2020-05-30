@@ -51,4 +51,6 @@
     <string name="ok">OK</string>
     <string name="title_dialog_sign_out">Are your sure you want to sign out?</string>
     <string name="synchronize_data">Synchronize data</string>
+    <string name="note_deleted">Note Deleted</string>
+    <string name="undo">Undo</string>
 </resources>

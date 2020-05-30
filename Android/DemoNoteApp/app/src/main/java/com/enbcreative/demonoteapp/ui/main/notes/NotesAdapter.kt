@@ -20,4 +20,6 @@ class NotesAdapter : BaseRecyclerView<Note, ListItemNoteBinding>() {
     }
 
     fun getCurrentItem(position: Int): Note = itemList[position]
+    fun removeItem(note: Note) = itemList.remove(note)
+    fun addItem(note: Note) = itemList.add(note)
 }
