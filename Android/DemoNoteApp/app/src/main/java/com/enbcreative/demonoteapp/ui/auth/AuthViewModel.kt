@@ -3,10 +3,6 @@ package com.enbcreative.demonoteapp.ui.auth
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.enbcreative.demonoteapp.TEST_MODE
-import com.enbcreative.demonoteapp.data.backup.data.LoginDataSource
-import com.enbcreative.demonoteapp.data.backup.data.LoginRepository
-import com.enbcreative.demonoteapp.data.backup.data.Result
 import com.enbcreative.demonoteapp.data.repository.UserRepository
 import com.enbcreative.demonoteapp.utils.ApiException
 import com.enbcreative.demonoteapp.utils.Coroutines
@@ -30,30 +26,18 @@ class AuthViewModel(private val repository: UserRepository) : ViewModel() {
             return
         }
 
-        if (TEST_MODE.not()) {
-            Coroutines.main {
-                try {
-                    val loginResponse = repository.login(email!!, password!!)
-                    loginResponse.user?.let {
-                        _loginResult.value = it.toString()
-                        repository.saveUser(it)
-                        listener?.onSuccess()
-                        return@main
-                    }
-                    _loginResult.value = loginResponse.message
-                } catch (e: Exception) {
-                    _loginResult.value = "Login failed with code: ${e.message}"
-                }
-            }
-        } else {
+        Coroutines.main {
             try {
-                val result = LoginRepository(LoginDataSource()).login(email!!, password!!)
-                if (result is Result.Success) {
-                    _loginResult.value = result.data.toString()
+                val loginResponse = repository.login(email!!, password!!)
+                loginResponse.user?.let {
+                    _loginResult.value = it.toString()
+                    repository.saveUser(it)
                     listener?.onSuccess()
-                } else _loginResult.value = "Login failed"
+                    return@main
+                }
+                _loginResult.value = loginResponse.message
             } catch (e: Exception) {
-                _loginResult.value = "Login failed with code: ${e.message}"
+                _loginResult.value = "Login failed. ${e.message}"
             }
         }
 
@@ -79,7 +63,7 @@ class AuthViewModel(private val repository: UserRepository) : ViewModel() {
                 }
                 _loginResult.value = "Cannot Sign Up! - ${signUpResponse.message}"
             } catch (e: ApiException) {
-                _loginResult.value = "Sign Up failed with code: ${e.message}"
+                _loginResult.value = "Sign Up failed. ${e.message}"
             }
         }
         listener?.onSuccessResult(_loginResult)

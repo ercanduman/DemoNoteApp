@@ -53,4 +53,6 @@
     <string name="synchronize_data">Synchronize data</string>
     <string name="note_deleted">Note Deleted</string>
     <string name="undo">Undo</string>
+    <string name="no_network">No network available</string>
+    <string name="refreshed">Refreshed…</string>
 </resources>

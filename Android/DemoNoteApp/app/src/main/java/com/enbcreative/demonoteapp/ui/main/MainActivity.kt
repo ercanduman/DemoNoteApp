@@ -49,13 +49,13 @@ class MainActivity : AppCompatActivity(), KodeinAware, SwipeRefreshLayout.OnRefr
         setSupportActionBar(toolbar)
         fab_main_activity.setOnClickListener { upsertNote(null) }
         swipe_to_refresh_layout_main.setOnRefreshListener(this)
+        viewModel = ViewModelProvider(this, factory).get(NotesViewModel::class.java)
         bindData()
     }
 
     private fun bindData() = Coroutines.main {
         progress_bar_loading_main.show()
         try {
-            viewModel = ViewModelProvider(this, factory).get(NotesViewModel::class.java)
             viewModel.synchronizeData()
             viewModel.notes.await().observe(this, Observer { handleData(it) })
         } catch (e: ApiException) {
@@ -65,6 +65,8 @@ class MainActivity : AppCompatActivity(), KodeinAware, SwipeRefreshLayout.OnRefr
             showContent(false, e.message)
             e.printStackTrace()
         }
+        if (isNetworkAvailable(this).not()) parent_content_main_activity.snackbar(getString(R.string.no_network))
+        else parent_content_main_activity.snackbar(getString(R.string.refreshed))
     }
 
     private fun handleData(notes: List<Note>) {

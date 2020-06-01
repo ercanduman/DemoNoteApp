@@ -14,13 +14,11 @@ class NotesViewModel(private val repository: NoteRepository) : ViewModel() {
     // fun delete(note: Note) = repository.deleteNote(note)
 
     init {
-        repository.publishNotes()
-        repository.synchronizeNotes()
+        repository.synchronizeAllNotes()
     }
 
     suspend fun synchronizeData() {
-        repository.publishNotes()
-        repository.synchronizeNotes()
+        repository.synchronizeAllNotes()
         repository.getAllNotes()
     }
 }

@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.enbcreative.demonoteapp.BuildConfig
+import com.google.android.material.snackbar.Snackbar
 
 fun Any.logd(message: String) {
     if (BuildConfig.DEBUG) Log.d(this.javaClass.simpleName, message)
@@ -24,6 +25,10 @@ fun ProgressBar.show() {
 
 fun ProgressBar.hide() {
     visibility = View.GONE
+}
+
+fun View.snackbar(message: String) {
+    Snackbar.make(this, message, Snackbar.LENGTH_SHORT).show()
 }
 
 /**
