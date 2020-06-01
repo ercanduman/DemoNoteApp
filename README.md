@@ -198,3 +198,8 @@ For more details about solution and **Usage**, please check [Solution Document h
 - [x] [Room + ViewModel + LiveData + RecyclerView (MVVM)](https://codinginflow.com/tutorials/android/room-viewmodel-livedata-recyclerview-mvvm/part-1-introduction)
 
 Happy coding! :+1: :1st_place_medal:
+
+
+[![license](https://img.shields.io/github/license/DAVFoundation/captain-n3m0.svg?style=flat-square)](https://github.com/ercanduman/DemoNoteApp/blob/master/LICENSE.md)
+
+DemoNoteApp, Copyright (C) 2020, ENB
