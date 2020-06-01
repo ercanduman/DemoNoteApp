@@ -65,8 +65,6 @@ class MainActivity : AppCompatActivity(), KodeinAware, SwipeRefreshLayout.OnRefr
             showContent(false, e.message)
             e.printStackTrace()
         }
-        if (isNetworkAvailable(this).not()) parent_content_main_activity.snackbar(getString(R.string.no_network))
-        else parent_content_main_activity.snackbar(getString(R.string.refreshed))
     }
 
     private fun handleData(notes: List<Note>) {
@@ -88,12 +86,15 @@ class MainActivity : AppCompatActivity(), KodeinAware, SwipeRefreshLayout.OnRefr
         if (dataExist) {
             recycler_view_notes.visibility = View.VISIBLE
             no_data_found_main.visibility = View.GONE
+            if (isNetworkAvailable(this).not()) parent_content_main_activity.snackbar(getString(R.string.no_network))
+            else parent_content_main_activity.snackbar(getString(R.string.refreshed))
         } else {
             recycler_view_notes.visibility = View.GONE
             no_data_found_main?.also {
                 it.visibility = View.VISIBLE
                 it.text = message
             }
+            parent_content_main_activity.snackbar(message!!)
         }
     }
 

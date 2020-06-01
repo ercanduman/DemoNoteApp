@@ -41,18 +41,22 @@ class NoteRepository(
     }
 
     private suspend fun fetchNotes() {
-        val currentTime = preferences.getLastTime()
-        if (currentTime.isNullOrEmpty() || isFetchNeeded(currentTime)) {
-            val userId = preferences.getUserID()
-            logd("Fetching note list for userId: $userId")
-            val response = apiRequest { api.getNotes(userId) }
-            logd("Api response message: ${response.message}")
-            if (response.error.not()) {
-                val notes = response.notes!!
-                logd("Api response fetched note list size: ${notes.size}")
-                notes.forEach { it.published = true }
-                noteList.postValue(notes)
-            } else throw ApiException(response.message)
+        try {
+            val currentTime = preferences.getLastTime()
+            if (currentTime.isNullOrEmpty() || isFetchNeeded(currentTime)) {
+                val userId = preferences.getUserID()
+                logd("Fetching note list for userId: $userId")
+                val response = apiRequest { api.getNotes(userId) }
+                logd("Api response message: ${response.message}")
+                if (response.error.not()) {
+                    val notes = response.notes!!
+                    logd("Api response fetched note list size: ${notes.size}")
+                    notes.forEach { it.published = true }
+                    noteList.postValue(notes)
+                } else throw ApiException(response.message)
+            }
+        } catch (e: Exception) {
+            e.message?.let { throw  ApiException(it) }
         }
     }
 
