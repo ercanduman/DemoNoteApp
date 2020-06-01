@@ -6,8 +6,8 @@ import androidx.room.PrimaryKey
 @Entity
 class ScheduledNote(
     @PrimaryKey(autoGenerate = true)
-    val id: Int? = 0,
-    val userId: Int? = 0,
+    val id: Int = 0,
+    val userId: Int,
     var content: String,
     var created_at: String
 )

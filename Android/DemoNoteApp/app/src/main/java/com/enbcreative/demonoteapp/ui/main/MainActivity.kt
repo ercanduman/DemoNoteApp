@@ -65,6 +65,8 @@ class MainActivity : AppCompatActivity(), KodeinAware, SwipeRefreshLayout.OnRefr
             showContent(false, e.message)
             e.printStackTrace()
         }
+        if (isNetworkAvailable(this).not()) parent_content_main_activity.snackbar(getString(R.string.no_network))
+        else parent_content_main_activity.snackbar(getString(R.string.refreshed))
     }
 
     private fun handleData(notes: List<Note>) {

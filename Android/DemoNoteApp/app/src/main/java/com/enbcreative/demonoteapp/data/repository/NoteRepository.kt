@@ -62,20 +62,27 @@ class NoteRepository(
     }
 
     fun saveScheduled(note: ScheduledNote) = Coroutines.io { db.getNoteDao().insert(note) }
-    fun publishNotes() = Coroutines.io {
+    fun synchronizeAllNotes() {
+        if (isNetworkAvailable(context)) {
+            publishNotes()
+            synchronizeNotes()
+        } else logd("No network available. Cannot synchronize notes...")
+    }
+
+    private fun publishNotes() = Coroutines.io {
         val unpublishedNoteList = db.getNoteDao().getScheduledNotes()
         logd("Un published note size: ${unpublishedNoteList.size}")
         if (unpublishedNoteList.isNotEmpty()) {
             unpublishedNoteList.forEach { note ->
                 val response =
-                    apiRequest { api.insertNewNote(note.userId!!, note.content, note.created_at) }
+                    apiRequest { api.insertNewNote(note.userId, note.content, note.created_at) }
                 logd(response.message)
                 if (response.error.not()) db.getNoteDao().deleteScheduledNote(note)
             }
         } else logd("All notes are published...")
     }
 
-    fun synchronizeNotes() = Coroutines.io {
+    private fun synchronizeNotes() = Coroutines.io {
         val unpublishedNoteList = db.getNoteDao().getUnPublishedNotes()
         logd("Un synchronized note size: ${unpublishedNoteList.size}")
         if (unpublishedNoteList.isNotEmpty()) {
