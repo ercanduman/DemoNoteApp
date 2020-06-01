@@ -49,13 +49,13 @@ class MainActivity : AppCompatActivity(), KodeinAware, SwipeRefreshLayout.OnRefr
         setSupportActionBar(toolbar)
         fab_main_activity.setOnClickListener { upsertNote(null) }
         swipe_to_refresh_layout_main.setOnRefreshListener(this)
+        viewModel = ViewModelProvider(this, factory).get(NotesViewModel::class.java)
         bindData()
     }
 
     private fun bindData() = Coroutines.main {
         progress_bar_loading_main.show()
         try {
-            viewModel = ViewModelProvider(this, factory).get(NotesViewModel::class.java)
             viewModel.synchronizeData()
             viewModel.notes.await().observe(this, Observer { handleData(it) })
         } catch (e: ApiException) {

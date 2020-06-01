@@ -15,7 +15,7 @@ private const val JSON_RESPONSE_SUCCESS =
 private const val JSON_RESPONSE_FAILED =
     "{\n  \"error\": true,\n  \"message\": \"Invalid email or password.\"\n}"
 
-data class ApiResponse(
+data class AuthResponse(
     val isSuccessful: Boolean?,
     val message: String?,
     val user: User?

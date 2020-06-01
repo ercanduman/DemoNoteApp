@@ -14,7 +14,7 @@ interface WebApi {
     suspend fun login(
         @Field("email") email: String,
         @Field("password") password: String
-    ): Response<ApiResponse>
+    ): Response<AuthResponse>
 
     @FormUrlEncoded
     @POST("api.php?enbapicall=signup")
@@ -23,7 +23,7 @@ interface WebApi {
         @Field("email") email: String,
         @Field("password") password: String,
         @Field("gender") gender: String? = "male"
-    ): Response<ApiResponse>
+    ): Response<AuthResponse>
 
     @FormUrlEncoded
     @POST("api.php?enbapicall=notes")

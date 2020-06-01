@@ -1,25 +1,24 @@
 package com.enbcreative.demonoteapp.data.repository
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.enbcreative.demonoteapp.DATA_FROM_ROOM
+import com.enbcreative.demonoteapp.R
 import com.enbcreative.demonoteapp.data.db.AppDatabase
 import com.enbcreative.demonoteapp.data.db.model.note.Note
 import com.enbcreative.demonoteapp.data.db.model.scheduled.ScheduledNote
 import com.enbcreative.demonoteapp.data.network.SafeApiRequest
 import com.enbcreative.demonoteapp.data.network.WebApi
 import com.enbcreative.demonoteapp.data.prefs.Preferences
-import com.enbcreative.demonoteapp.utils.ApiException
-import com.enbcreative.demonoteapp.utils.Coroutines
-import com.enbcreative.demonoteapp.utils.isFetchNeeded
-import com.enbcreative.demonoteapp.utils.logd
+import com.enbcreative.demonoteapp.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class NoteRepository(
     private val db: AppDatabase,
     private val api: WebApi,
-    private val preferences: Preferences
+    private val preferences: Preferences,
+    private val context: Context
 ) : SafeApiRequest() {
     private val noteList = MutableLiveData<List<Note>?>()
 
@@ -29,10 +28,14 @@ class NoteRepository(
 
     fun saveNote(note: Note) = Coroutines.io { db.getNoteDao().insert(note) }
     fun updateNote(note: Note) = Coroutines.io { db.getNoteDao().update(note) }
+
     // fun deleteNote(note: Note) = Coroutines.io { db.getNoteDao().delete(note) }
     suspend fun getAllNotes(): LiveData<List<Note>> {
         return withContext(Dispatchers.IO) {
-            if (DATA_FROM_ROOM.not()) fetchNotes()
+            val count = db.getNoteDao().getNoteCount()
+            if (count == 0 && isNetworkAvailable(context).not()) {
+                throw NoNetworkExceptions(context.getString(R.string.no_network))
+            } else if (isNetworkAvailable(context)) fetchNotes()
             db.getNoteDao().getAllNotes(preferences.getUserID())
         }
     }

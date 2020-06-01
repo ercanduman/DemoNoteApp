@@ -13,7 +13,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.enbcreative.demonoteapp.LOGGED_ID
 import com.enbcreative.demonoteapp.R
 import com.enbcreative.demonoteapp.USER_ID_INVALID
 import com.enbcreative.demonoteapp.data.prefs.Preferences
@@ -56,7 +55,7 @@ class LoginFragment : Fragment(), KodeinAware, ProcessListener {
             findNavController().navigate(R.id.action_LoginFragment_to_SignUpFragment)
         }
 
-        if (LOGGED_ID || preferences.getUserID() != USER_ID_INVALID) startMainActivity()
+        if (preferences.getUserID() != USER_ID_INVALID) startMainActivity()
         initViews()
     }
 
@@ -111,10 +110,6 @@ class LoginFragment : Fragment(), KodeinAware, ProcessListener {
                 }
                 false
             }
-
-            /* loginButton.setOnClickListener {
-                progress_bar_loading_login.show()
-            }*/
         }
     }
 
