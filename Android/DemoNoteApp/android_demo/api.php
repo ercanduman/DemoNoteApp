@@ -12,6 +12,7 @@
   if($connection -> connect_error) die("Connection failed: ".$connection->connect_error);
 
   $response = array();
+  $target_dir = "images/";
 
   if (isset($_GET['enbapicall'])){
     switch ($_GET['enbapicall']) {
@@ -200,6 +201,43 @@
             }
            break;
 
+        case 'upload':
+            if(parametersAvailable(array('userId'))) {
+                $userId = $_POST['userId'];
+
+                $filename= $_FILES["image"]["name"];
+                $filename = preg_replace('/\s+/', '_', $filename);
+                // echo $filename.'\n';
+
+                $target_file = $target_dir.uniqid().'_'.$filename;
+                // echo $target_file;
+
+                // file will be uploaded to server tmp directory
+                if(move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
+                    // if file uploaded to server successfully, then insert its path to MYSQL database.
+                    $statement = $connection -> prepare("UPDATE users SET path = ? WHERE id = ?");
+                    $statement -> bind_param("ss", $target_file, $userId);
+
+                    if($statement->execute()){
+                        $response['error'] = false;
+                        $response['message'] = 'User image updated successfully.';
+                        $response['image'] = getBaseURL() . $target_file;
+                    } else {
+                        $response['error'] = true;
+                        $response['message'] = 'Cannot update user image in MYSQL database. Error: '. $statement->error;
+                    }
+
+                    $statement-> close();
+                } else {
+                    $response['error'] = true;
+                    $response['message'] = 'Uploading file to ' . $target_dir . ' directory is failed. Please try again later.';
+                }
+            } else {
+                $response['error'] = true;
+                $response['message'] = 'Required parameters missing. Please make sure that userId and image parameters available for upload execution.';
+            }
+           break;
+
         default:
             $response['error'] = true;
             $response['message'] = 'Invalid execution... API should be called for login, signup or notes operations.';
@@ -210,12 +248,18 @@
        $response['message'] = 'Invalid API call';
   }
 
-  header('Content-Type:Application/json');
-  echo json_encode($response);
-
   function parametersAvailable($params) {
     foreach($params as $param) { if(!isset($_POST[$param])) return false; }
     return true;
   }
 
+  function getBaseURL(){
+    $url = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+    $url .= $_SERVER['SERVER_NAME'];
+    $url .= $_SERVER['REQUEST_URI'];
+    return dirname($url) . '/';
+  }
+
+  header('Content-Type:Application/json');
+  echo json_encode($response);
 ?>

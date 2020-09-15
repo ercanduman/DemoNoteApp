@@ -16,6 +16,7 @@ class Preferences(context: Context) {
     fun signOut() {
         saveUserID(USER_ID_INVALID)
         saveLastTime(null)
+        preference.all.clear()
     }
 
     companion object {
